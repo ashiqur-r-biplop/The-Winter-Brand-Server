@@ -47,7 +47,14 @@ const updateReviewStatus = catchAsync(async (req: Request, res: Response, next: 
 })
 const getAllReviews = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const reviews = await reviewModel.find()
+
+        const reviewType = req.query?.type
+        let reviews;
+        if (reviewType) {
+            reviews = await reviewModel.find({ status: reviewType }).sort({ createdAt: -1 })
+        } else {
+            reviews = await reviewModel.find()
+        }
         sendResponse(res, {
             success: true,
             statusCode: httpStatus.OK,
@@ -58,12 +65,53 @@ const getAllReviews = catchAsync(async (req: Request, res: Response, next: NextF
         return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
     }
 })
+const getReviews = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const reviewsLimit = parseInt(req.query?.limit as string)
+        const sort = req.query?.sort === "des" ? -1 : 1
+        let reviews;
+        if (reviewsLimit && sort) {
+            reviews = await reviewModel.find({ status: "approved" }).sort({ createdAt: sort }).limit(reviewsLimit)
+        } else if (reviewsLimit) {
+            reviews = await reviewModel.find({ status: "approved" }).limit(reviewsLimit)
+        } else {
+            reviews = await reviewModel.find({ status: "approved" })
+        }
+
+        sendResponse(res, {
+            success: true,
+            statusCode: httpStatus.OK,
+            data: reviews
+        })
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+    }
+})
+const deleteReview = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const reviewId = req.params?.id
+        await reviewModel.findByIdAndDelete(reviewId)
+
+        sendResponse(res, {
+            success: true,
+            statusCode: httpStatus.OK,
+            message: "review deleted successfully"
+        })
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+    }
+})
+
+
 
 const reviewController = {
     createReview,
     updateReviewStatus,
     getAllReviews,
-    getReviews
+    getReviews,
+    deleteReview
 }
 
 export default reviewController

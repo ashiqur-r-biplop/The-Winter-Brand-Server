@@ -5,6 +5,7 @@ const reviewRouter = express.Router()
 
 reviewRouter.post("/create-review", reviewController.createReview)
 reviewRouter.put("/update-review-status/:id", reviewController.updateReviewStatus)
+reviewRouter.delete("/delete-reviews/:id", reviewController.deleteReview)
 reviewRouter.get("/get-all-reviews", reviewController.getAllReviews)
 reviewRouter.get("/get-reviews", reviewController.getReviews)
 
