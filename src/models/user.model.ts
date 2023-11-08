@@ -3,6 +3,7 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 export interface IUser extends Document {
     name: string;
     email: string;
+    firebaseUId: string;
     avater?: {
         url: string
     }
@@ -19,6 +20,10 @@ const userSchema: Schema<IUser> = new mongoose.Schema({
         type: String,
         required: [true, "Please enter your email"],
         unique: true
+    },
+    firebaseUId: {
+        type: String,
+        required: [true, "Firebase id is required"]
     },
     avater: {
         type: String,
