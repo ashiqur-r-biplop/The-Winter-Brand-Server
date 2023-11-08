@@ -6,7 +6,7 @@ export interface IUser extends Document {
     avater?: {
         url: string
     }
-    role: string;
+    role?: string;
 }
 
 
