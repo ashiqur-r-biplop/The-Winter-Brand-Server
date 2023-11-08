@@ -26,9 +26,29 @@ const createReview = catchAsync(async (req: Request, res: Response, next: NextFu
         return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
     }
 })
+const updateReviewStatus = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const reviewId = req.params.id
+
+        await reviewModel.findByIdAndUpdate(reviewId, {
+            $set: {
+                status: "approved"
+            }
+        }, { new: true })
+        sendResponse(res, {
+            success: true,
+            statusCode: httpStatus.CREATED,
+            message: 'review status updated successfully'
+        })
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+    }
+})
 
 const reviewController = {
-    createReview
+    createReview,
+    updateReviewStatus
 }
 
 export default reviewController
