@@ -44,11 +44,11 @@ const updateAccessToken = catchAsync(async (req: Request, res: Response, next: N
             return next(new ErrorHandler(message, httpStatus.BAD_REQUEST))
         }
         console.log(session)
-        const user = JSON.parse(session)
-        const new_access_token = jwt.sign({ id: user._id }, config.jwt.secret as string, {
+        const user = JSON.parse(session as string)
+        const new_access_token = jwt.sign({ email: user.email }, config.jwt.secret as string, {
             expiresIn: "5m"
         })
-        const new_refresh_token = jwt.sign({ id: user._id }, config.jwt.refresh_secret as string, {
+        const new_refresh_token = jwt.sign({ email: user.email }, config.jwt.refresh_secret as string, {
             expiresIn: "3d"
         })
 
@@ -137,15 +137,16 @@ const loginUser = catchAsync(async (req: Request, res: Response, next: NextFunct
         if (!user) {
             return next(new ErrorHandler("Invalid email and password", httpStatus.BAD_REQUEST))
         }
+        nodeCache.set("user:" + user.email, JSON.stringify(user))
 
 
 
-        else {
-            const newUser = await userModel.findOne({ email })
-            if (newUser) {
-                sendToken(newUser, httpStatus.OK, res)
-            }
+
+        const newUser = await userModel.findOne({ email })
+        if (newUser) {
+            sendToken(newUser, httpStatus.OK, res)
         }
+
 
     } catch (error: any) {
         return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
@@ -158,7 +159,8 @@ const logout = catchAsync(async (req: Request, res: Response, next: NextFunction
 
         if (!email) return next(new ErrorHandler("email is require in query", httpStatus.BAD_REQUEST))
         nodeCache.del(`user:${email}`)
-
+        res.cookie("access_token", "", { maxAge: 1 })
+        res.cookie("refresh_token", "", { maxAge: 1 })
         sendResponse(res, {
             success: true,
             statusCode: httpStatus.CREATED,

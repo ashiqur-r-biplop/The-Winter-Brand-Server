@@ -20,15 +20,15 @@ export const isAuthenticated = catchAsync(async (req: Request, res: Response, ne
         return next(new ErrorHandler("access token is not valid", httpStatus.BAD_REQUEST))
     }
 
-    const chachedUser = nodeCache.get(`user: + ${decoded.email}`)
-
+    const chachedUser = nodeCache.get("user:" + decoded.email)
+    console.log(24, chachedUser)
     if (!chachedUser) {
         return next(new ErrorHandler("user not found", httpStatus.BAD_REQUEST))
     }
 
-    const user = JSON.parse(chachedUser)
+    const user = JSON.parse(chachedUser as string)
 
-    delete user.password
+
 
     req.user = user
     next()
