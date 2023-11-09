@@ -6,7 +6,7 @@ interface IProduct extends Document {
     product_description: string;
     price: number;
     discount?: number | null;
-    product_thambnail: string;
+    product_image: string;
     quantity: number;
 }
 
@@ -28,7 +28,7 @@ const ProductSchema: Schema<IProduct> = new mongoose.Schema({
         type: Number,
         default: null
     },
-    product_thambnail: {
+    product_image: {
         type: String,
         required: [true, "Product thabnail is required"]
     },

@@ -5,7 +5,7 @@ export interface IUser extends Document {
     email: string;
     firebaseUId: string;
     avater?: {
-        url: string
+        url?: string
     }
     role?: string;
 }

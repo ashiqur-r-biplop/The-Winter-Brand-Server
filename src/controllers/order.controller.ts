@@ -42,9 +42,40 @@ const createOrder = catchAsync(async (req: Request, res: Response, next: NextFun
     }
 })
 
+// only admin 
+const deleteOrder = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const orderId = req.params?.id
+        await orderModel.findByIdAndDelete(orderId)
+        sendResponse(res, {
+            success: true,
+            statusCode: httpStatus.CREATED,
+            message: "order deleted successfully"
+        })
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+    }
+})
+const getOrders = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const orders = await orderModel.find().sort({ createdAt: -1 })
+        sendResponse(res, {
+            success: true,
+            statusCode: httpStatus.CREATED,
+            data: orders
+        })
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+    }
+})
+
 
 const orderController = {
-    createOrder
+    createOrder,
+    deleteOrder,
+    getOrders
 }
 
 export default orderController
