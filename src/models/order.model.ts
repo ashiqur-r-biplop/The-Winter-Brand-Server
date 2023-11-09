@@ -3,6 +3,9 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 export interface IOrder extends Document {
     name: string;
     product_id: string;
+    transaction_id: string;
+    products_price: number;
+    products_quantity: number;
     company?: string;
     contact_email: string
     delivery_info: {
@@ -27,6 +30,18 @@ const OrderSchema: Schema<IOrder> = new mongoose.Schema({
     product_id: {
         type: String,
         required: [true, "product id is required"]
+    },
+    transaction_id: {
+        type: String,
+        required: [true, "transaction id is required"]
+    },
+    products_price: {
+        type: Number,
+        required: [true, "products price id is required"]
+    },
+    products_quantity: {
+        type: Number,
+        required: [true, "products quantity id is required"]
     },
     company: {
         type: String,

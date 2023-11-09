@@ -7,6 +7,7 @@ import errorHandlerMiddleware from "./middleware/errorHandler.middleware"
 import productRouter from "./routes/product.routes"
 import userRouter from "./routes/user.routes"
 import reviewRouter from "./routes/review.routes"
+import orderRouter from "./routes/order.routes"
 
 export const app: Application = express()
 
@@ -18,7 +19,7 @@ app.use(cors({
 
 
 
-app.use("/api/v1", productRouter, userRouter, reviewRouter)
+app.use("/api/v1", productRouter, userRouter, reviewRouter, orderRouter)
 app.get("/test", (req: Request, res: Response) => {
     res.json({
         success: true,
