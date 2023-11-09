@@ -3,6 +3,7 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 export interface IOrder extends Document {
     name: string;
     product_id: string;
+    order_status: string;
     transaction_id: string;
     products_price: number;
     products_quantity: number;
@@ -30,6 +31,11 @@ const OrderSchema: Schema<IOrder> = new mongoose.Schema({
     product_id: {
         type: String,
         required: [true, "product id is required"]
+    },
+    order_status: {
+        type: String,
+        default: "pending",
+        enum: ["pending", "processing", "placed order", "completed"]
     },
     transaction_id: {
         type: String,

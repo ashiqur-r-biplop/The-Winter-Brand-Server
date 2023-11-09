@@ -42,6 +42,38 @@ const createOrder = catchAsync(async (req: Request, res: Response, next: NextFun
     }
 })
 
+
+
+// only admin 
+const updateOrderStatus = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const orderId = req.params?.id
+        const status = req.body?.order_status
+
+        if (!status) {
+            return next(new ErrorHandler("status is required", httpStatus.BAD_REQUEST))
+        }
+        const statusOptions = ["pending", "processing", "placed order", "completed"]
+        if (!statusOptions.includes(status)) {
+            return next(new ErrorHandler("invalid status", httpStatus.BAD_REQUEST))
+        }
+
+        await orderModel.findByIdAndUpdate(orderId, {
+            $set: {
+                order_status: status
+            }
+        }, { new: true })
+
+        sendResponse(res, {
+            success: true,
+            statusCode: httpStatus.CREATED,
+            message: "order status updated successfully"
+        })
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+    }
+})
 // only admin 
 const deleteOrder = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -72,8 +104,10 @@ const getOrders = catchAsync(async (req: Request, res: Response, next: NextFunct
 })
 
 
+
 const orderController = {
     createOrder,
+    updateOrderStatus,
     deleteOrder,
     getOrders
 }
