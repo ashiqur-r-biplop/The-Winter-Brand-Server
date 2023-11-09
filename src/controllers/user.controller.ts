@@ -15,7 +15,6 @@ const createUser = catchAsync(async (req: Request, res: Response, next: NextFunc
         const newUserData = {
             name: userData.name,
             email: userData.email,
-            firebaseUId: userData.firebaseUId,
         }
 
         await userModel.create(newUserData)
@@ -30,45 +29,7 @@ const createUser = catchAsync(async (req: Request, res: Response, next: NextFunc
     }
 })
 
-const updateAccessToken = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const refresh_token = req.cookies?.refresh_token as string
-        const decoded = jwt.verify(refresh_token, config.jwt.refresh_secret as string) as JwtPayload
-        const message = "could not get refresh token"
-        if (!decoded) {
-            return next(new ErrorHandler(message, httpStatus.BAD_REQUEST))
-        }
 
-        const session = nodeCache.get("user:" + decoded?.email as string)
-        if (!session) {
-            return next(new ErrorHandler(message, httpStatus.BAD_REQUEST))
-        }
-        console.log(session)
-        const user = JSON.parse(session as string)
-        const new_access_token = jwt.sign({ email: user.email }, config.jwt.secret as string, {
-            expiresIn: "5m"
-        })
-        const new_refresh_token = jwt.sign({ email: user.email }, config.jwt.refresh_secret as string, {
-            expiresIn: "3d"
-        })
-
-        req.user = user
-
-        res.cookie("access_token", new_access_token, accessTokenOption)
-        res.cookie("refresh_token", new_refresh_token, refreshTokenOption)
-
-        sendResponse(res, {
-            statusCode: httpStatus.OK,
-            success: true,
-            data: { new_access_token }
-        })
-
-    }
-    catch (error: any) {
-        return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
-
-    }
-})
 
 const getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -179,7 +140,6 @@ const logout = catchAsync(async (req: Request, res: Response, next: NextFunction
 
 const userController = {
     createUser,
-    updateAccessToken,
     getAllUsers,
     getUserRole,
     loginUser,

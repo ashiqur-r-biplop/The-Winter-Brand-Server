@@ -4,6 +4,7 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 interface IProduct extends Document {
     product_name: string;
     product_description: string;
+    product_status?: string;
     price: number;
     discount?: number | null;
     product_image: string;
@@ -19,6 +20,11 @@ const ProductSchema: Schema<IProduct> = new mongoose.Schema({
     product_description: {
         type: String,
         required: [true, "Product description is required"]
+    },
+    product_status: {
+        type: String,
+        default: "in stock",
+        enum: ["in stock", "out of stock"]
     },
     price: {
         type: Number,
