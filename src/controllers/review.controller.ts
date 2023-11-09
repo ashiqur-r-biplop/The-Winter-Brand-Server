@@ -10,7 +10,7 @@ const createReview = catchAsync(async (req: Request, res: Response, next: NextFu
         const reviewData = req.body as IReview
         const newReview = {
             rating: reviewData.rating,
-            review_title: reviewData.review_title,
+            name: reviewData.name,
             review: reviewData.review,
             email: reviewData.email
         }

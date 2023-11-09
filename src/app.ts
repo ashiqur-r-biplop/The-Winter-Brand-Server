@@ -2,6 +2,7 @@ import express, { Application, Request, Response, NextFunction } from "express"
 import cors from "cors"
 import cookieParser from "cookie-parser"
 import httpStatus from "http-status"
+import NodeCache from "node-cache"
 import config from "./config"
 import errorHandlerMiddleware from "./middleware/errorHandler.middleware"
 import productRouter from "./routes/product.routes"
@@ -10,6 +11,8 @@ import reviewRouter from "./routes/review.routes"
 import orderRouter from "./routes/order.routes"
 
 export const app: Application = express()
+export const nodeCache = new NodeCache()
+
 
 app.use(express.json({ limit: "50mb" }))
 app.use(cookieParser())

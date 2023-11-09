@@ -6,6 +6,7 @@ import ErrorHandler from "../utils/ErrorHandler"
 import sendResponse from "../utils/sendResponse"
 import userModel, { IUser } from "../models/user.model"
 import config from "../config"
+import { nodeCache } from "../app"
 
 const createUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -28,61 +29,83 @@ const createUser = catchAsync(async (req: Request, res: Response, next: NextFunc
     }
 })
 
-// const updateAccessToken = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const authorization = req.headers.authorization
-//         if (!authorization) {
-//             return res.status(401).send({ error: true, message: "unauthorized access" })
-//         }
+const getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const users = await userModel.find()
+        sendResponse(res, {
+            success: true,
+            statusCode: httpStatus.CREATED,
+            data: users
+        })
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+    }
+})
+const getUserRole = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const email = req.query?.email
 
-//         const token = authorization.split(' ')[1]
-//         jwt.verify(token, config.jwt.secret as Secret, (error, decoded) => {
-//             if (error) {
-//                 return res.status(401).send({ error: true, message: "unauthorized access" })
-//             }
-//             req.user = decoded
-//             next()
-//         })
+        if (!email) return next(new ErrorHandler("email is require in query", httpStatus.BAD_REQUEST))
+        const cachedUser = nodeCache.get(`user:${email}`) as string
+        if (cachedUser) {
+
+            const user = JSON.parse(cachedUser)
+            return sendResponse(res, {
+                success: true,
+                statusCode: httpStatus.CREATED,
+                data: {
+                    role: user.role
+                }
+            })
+        } else {
+
+            const user = await userModel.findOne({ email })
+            if (user) {
+                nodeCache.set(`user:${user.email}`, JSON.stringify(user))
+                return sendResponse(res, {
+                    success: true,
+                    statusCode: httpStatus.CREATED,
+                    data: {
+                        role: user.role
+                    }
+                })
+            } else {
+                return next(new ErrorHandler("invalid email", httpStatus.UNAUTHORIZED))
+            }
+        }
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+    }
+})
+const logout = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const email = req.query?.email
+
+        if (!email) return next(new ErrorHandler("email is require in query", httpStatus.BAD_REQUEST))
+        nodeCache.del(`user:${email}`)
+
+        sendResponse(res, {
+            success: true,
+            statusCode: httpStatus.CREATED,
+            message: "logout successfully"
+        })
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+    }
+})
 
 
-//         const message = "could not get refresh token"
-//         if (!decoded) {
-//             return next(new ErrorHandler(message, httpStatus.BAD_REQUEST))
-//         }
 
 
 
-//         const user = JSON.parse(session)
-//         const new_access_token = jwt.sign({ id: user._id }, config.jwt.secret as string, {
-//             expiresIn: "5m"
-//         })
-//         const new_refresh_token = jwt.sign({ id: user._id }, config.jwt.refresh_secret as string, {
-//             expiresIn: "3d"
-//         })
-
-
-
-
-//         req.user = user
-
-//         res.cookie("access_token", new_access_token, accessTokenOption)
-//         res.cookie("refresh_token", new_refresh_token, refreshTokenOption)
-
-//         sendResponse(res, {
-//             statusCode: httpStatus.OK,
-//             success: true,
-//             data: { new_access_token }
-//         })
-
-//     }
-//     catch (error: any) {
-//         return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
-
-//     }
-// })
 
 const userController = {
-    createUser
+    createUser,
+    getAllUsers,
+    getUserRole,
+    logout
 }
 
 export default userController
