@@ -1,7 +1,8 @@
 import { Response } from "express";
+import jwt from "jsonwebtoken"
 import { IUser } from "../models/user.model";
-
 import config from "../config";
+import { nodeCache } from "../app";
 
 interface ITokenOption {
     exprire: Date;
@@ -31,10 +32,26 @@ export const refreshTokenOption: ITokenOption = {
     secure: config.env === "production",
 }
 
-const sendToken = () => {
 
+const sendToken = (user: IUser, statusCode: number, res: Response) => {
+    const accessToken = jwt.sign({ email: user.email }, config.jwt.secret || "", {
+        expiresIn: "5m"
+    })
+    const refreshToken = jwt.sign({ email: user.email }, config.jwt.refresh_secret || "", {
+        expiresIn: "3d"
+    })
+
+
+
+    nodeCache.set("user:" + user.email, JSON.stringify(user) as any)
+    res.cookie("access_token", accessToken, accessTokenOption)
+    res.cookie("refresh_token", refreshToken, refreshTokenOption)
+    res.status(statusCode).json({
+        success: true,
+        user,
+        accessToken
+    })
 }
-
 
 
 

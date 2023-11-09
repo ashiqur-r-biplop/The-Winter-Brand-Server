@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express"
-import jwt, { Secret } from "jsonwebtoken"
+import jwt, { JwtPayload, Secret } from "jsonwebtoken"
 import httpStatus from "http-status"
 import catchAsync from "../middleware/asyncError.middlerware"
 import ErrorHandler from "../utils/ErrorHandler"
@@ -7,6 +7,7 @@ import sendResponse from "../utils/sendResponse"
 import userModel, { IUser } from "../models/user.model"
 import config from "../config"
 import { nodeCache } from "../app"
+import sendToken, { accessTokenOption, refreshTokenOption } from "../utils/jwt"
 
 const createUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -26,6 +27,46 @@ const createUser = catchAsync(async (req: Request, res: Response, next: NextFunc
         })
     } catch (error: any) {
         return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+    }
+})
+
+const updateAccessToken = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const refresh_token = req.cookies?.refresh_token as string
+        const decoded = jwt.verify(refresh_token, config.jwt.refresh_secret as string) as JwtPayload
+        const message = "could not get refresh token"
+        if (!decoded) {
+            return next(new ErrorHandler(message, httpStatus.BAD_REQUEST))
+        }
+
+        const session = nodeCache.get("user:" + decoded?.email as string)
+        if (!session) {
+            return next(new ErrorHandler(message, httpStatus.BAD_REQUEST))
+        }
+        console.log(session)
+        const user = JSON.parse(session)
+        const new_access_token = jwt.sign({ id: user._id }, config.jwt.secret as string, {
+            expiresIn: "5m"
+        })
+        const new_refresh_token = jwt.sign({ id: user._id }, config.jwt.refresh_secret as string, {
+            expiresIn: "3d"
+        })
+
+        req.user = user
+
+        res.cookie("access_token", new_access_token, accessTokenOption)
+        res.cookie("refresh_token", new_refresh_token, refreshTokenOption)
+
+        sendResponse(res, {
+            statusCode: httpStatus.OK,
+            success: true,
+            data: { new_access_token }
+        })
+
+    }
+    catch (error: any) {
+        return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+
     }
 })
 
@@ -78,6 +119,39 @@ const getUserRole = catchAsync(async (req: Request, res: Response, next: NextFun
         return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
     }
 })
+
+interface ILoginRequest {
+    email: string;
+}
+
+const loginUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { email } = req.body as ILoginRequest
+        if (!email) {
+            return next(new ErrorHandler("plase enter email", httpStatus.BAD_REQUEST))
+        }
+
+        const user = await userModel.findOne({ email })
+
+
+        if (!user) {
+            return next(new ErrorHandler("Invalid email and password", httpStatus.BAD_REQUEST))
+        }
+
+
+
+        else {
+            const newUser = await userModel.findOne({ email })
+            if (newUser) {
+                sendToken(newUser, httpStatus.OK, res)
+            }
+        }
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+    }
+})
+
 const logout = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const email = req.query?.email
@@ -103,8 +177,10 @@ const logout = catchAsync(async (req: Request, res: Response, next: NextFunction
 
 const userController = {
     createUser,
+    updateAccessToken,
     getAllUsers,
     getUserRole,
+    loginUser,
     logout
 }
 
