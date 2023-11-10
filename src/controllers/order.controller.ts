@@ -4,10 +4,12 @@ import ErrorHandler from "../utils/ErrorHandler"
 import httpStatus from "http-status"
 import orderModel, { IOrder } from "../models/order.model"
 import sendResponse from "../utils/sendResponse"
+import productModel from "../models/product.model"
 
 const createOrder = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const orderData = req.body as IOrder
+        const productId = orderData.product_id as string
         const newOrder = {
             name: orderData.name,
             product_id: orderData.product_id,
@@ -30,6 +32,27 @@ const createOrder = catchAsync(async (req: Request, res: Response, next: NextFun
         }
 
         await orderModel.create(newOrder)
+        const product = await productModel.findById(productId)
+
+
+        if (product?.quantity) {
+            const productQuantity = product?.quantity
+            if (productQuantity > 0) {
+                product.quantity = product?.quantity - 1
+
+                if (product.quantity === 0) {
+                    product.product_status = "out of stock"
+                }
+
+                await product.save()
+            } else {
+                return next(new ErrorHandler("This product is out of stock", httpStatus.BAD_REQUEST))
+            }
+        } else {
+            return next(new ErrorHandler("This product is out of stock", httpStatus.BAD_REQUEST))
+        }
+
+
 
         sendResponse(res, {
             success: true,
