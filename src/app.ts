@@ -10,6 +10,7 @@ import userRouter from "./routes/user.routes"
 import reviewRouter from "./routes/review.routes"
 import orderRouter from "./routes/order.routes"
 import marketingRouter from "./routes/marketing.routes"
+import contactRouter from "./routes/contact.routes"
 
 export const app: Application = express()
 export const nodeCache = new NodeCache()
@@ -23,7 +24,7 @@ app.use(cors({
 
 
 
-app.use("/api/v1", productRouter, userRouter, reviewRouter, orderRouter, marketingRouter)
+app.use("/api/v1", productRouter, userRouter, reviewRouter, orderRouter, marketingRouter, contactRouter)
 app.get("/test", (req: Request, res: Response) => {
     res.json({
         success: true,
