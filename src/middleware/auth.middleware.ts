@@ -9,7 +9,8 @@ import config from "../config";
 import { nodeCache } from "../app";
 
 export const isAuthenticated = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const access_token = req.cookies?.access_token as string
+    const access_token: string | undefined = req.headers?.authorization
+
 
     if (!access_token) {
         return next(new ErrorHandler("Please login", httpStatus.BAD_REQUEST))
@@ -21,7 +22,7 @@ export const isAuthenticated = catchAsync(async (req: Request, res: Response, ne
     }
 
     const chachedUser = nodeCache.get("user:" + decoded.email)
-    console.log(24, chachedUser)
+
     if (!chachedUser) {
         return next(new ErrorHandler("user not found", httpStatus.BAD_REQUEST))
     }

@@ -45,13 +45,16 @@ const getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFun
 })
 const getUserRole = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const email = req.query?.email
+        const email = req.params?.email as string
 
         if (!email) return next(new ErrorHandler("email is require in query", httpStatus.BAD_REQUEST))
-        const cachedUser = nodeCache.get(`user:${email}`) as string
-        if (cachedUser) {
+        const isCachedUser = nodeCache.has(`user:${email}`)
 
-            const user = JSON.parse(cachedUser)
+
+
+        if (isCachedUser) {
+            const cachedUser = nodeCache.get(`user:${email}`)
+            const user = JSON.parse(cachedUser as string)
             return sendResponse(res, {
                 success: true,
                 statusCode: httpStatus.CREATED,
@@ -77,6 +80,7 @@ const getUserRole = catchAsync(async (req: Request, res: Response, next: NextFun
         }
 
     } catch (error: any) {
+
         return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
     }
 })
@@ -88,6 +92,7 @@ interface ILoginRequest {
 const loginUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { email } = req.body as ILoginRequest
+
         if (!email) {
             return next(new ErrorHandler("plase enter email", httpStatus.BAD_REQUEST))
         }
@@ -98,15 +103,9 @@ const loginUser = catchAsync(async (req: Request, res: Response, next: NextFunct
         if (!user) {
             return next(new ErrorHandler("Invalid email and password", httpStatus.BAD_REQUEST))
         }
-        nodeCache.set("user:" + user.email, JSON.stringify(user))
 
+        sendToken(user, httpStatus.OK, res)
 
-
-
-        const newUser = await userModel.findOne({ email })
-        if (newUser) {
-            sendToken(newUser, httpStatus.OK, res)
-        }
 
 
     } catch (error: any) {

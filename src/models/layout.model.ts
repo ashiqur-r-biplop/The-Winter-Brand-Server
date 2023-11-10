@@ -1,12 +1,13 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
+import mongoose, { Document, Model, Mongoose, Schema } from "mongoose";
 
 export interface IFaq extends Document {
+    index: number;
     question: string;
     body: string
 }
 // TODO featured image
 export interface IFeaturedImagw extends Document {
-    // image_url
+    image_url: string
 }
 
 export interface ILayout extends Document {
@@ -16,18 +17,14 @@ export interface ILayout extends Document {
 }
 
 const FaqSchema: Schema<IFaq> = new mongoose.Schema({
-    question: {
-        type: String,
-        required: [true, "Question is required"]
-    },
-    body: {
-        type: String,
-        required: [true, "Body is required"]
-    }
+    question: String,
+    body: String,
 })
 
 
+const LayoutSchema: Schema<ILayout> = new mongoose.Schema({
 
+}, { timestamps: true })
 
 const faqModel: Model<IFaq> = mongoose.model("faq", FaqSchema)
 

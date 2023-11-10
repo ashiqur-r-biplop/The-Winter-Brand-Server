@@ -8,6 +8,7 @@ export default {
     port: process.env.PORT,
     origin: process.env.ORIGIN,
     database_url: process.env.DATABASE_URL,
+    payment_secret: process.env.PAYMENT_SECRET,
     jwt: {
         secret: process.env.JWT_SECRET,
         refresh_secret: process.env.JWT_REFRESH_SECRET,

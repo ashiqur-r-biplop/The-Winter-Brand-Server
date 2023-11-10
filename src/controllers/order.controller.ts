@@ -5,10 +5,14 @@ import httpStatus from "http-status"
 import orderModel, { IOrder } from "../models/order.model"
 import sendResponse from "../utils/sendResponse"
 import productModel from "../models/product.model"
+import Stripe from "stripe"
+import config from "../config"
+const stripe = new Stripe(config.payment_secret || "");
 
 const createOrder = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const orderData = req.body as IOrder
+
         const productId = orderData.product_id as string
         const newOrder = {
             name: orderData.name,
@@ -128,11 +132,43 @@ const getOrders = catchAsync(async (req: Request, res: Response, next: NextFunct
 
 
 
+// payments 
+
+const newPayment = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const amount = req.body?.amount
+        if (!amount) return next(new ErrorHandler("amount is required", httpStatus.BAD_REQUEST))
+        const payment = await stripe.paymentIntents.create({
+            amount: amount,
+            currency: "USD",
+            automatic_payment_methods: {
+                enabled: true
+            }
+        })
+        sendResponse(res, {
+            success: true,
+            statusCode: httpStatus.CREATED,
+            data: {
+                client_secret: payment.client_secret
+            }
+        })
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+    }
+})
+
+
+
+
+
+
 const orderController = {
     createOrder,
     updateOrderStatus,
     deleteOrder,
-    getOrders
+    getOrders,
+    newPayment
 }
 
 export default orderController

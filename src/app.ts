@@ -3,6 +3,7 @@ import cors from "cors"
 import cookieParser from "cookie-parser"
 import httpStatus from "http-status"
 import NodeCache from "node-cache"
+import morgan from "morgan"
 import config from "./config"
 import errorHandlerMiddleware from "./middleware/errorHandler.middleware"
 import productRouter from "./routes/product.routes"
@@ -15,7 +16,7 @@ import contactRouter from "./routes/contact.routes"
 export const app: Application = express()
 export const nodeCache = new NodeCache()
 
-
+app.use(morgan("dev"))
 app.use(express.json({ limit: "50mb" }))
 app.use(cookieParser())
 app.use(cors({

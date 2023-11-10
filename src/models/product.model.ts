@@ -8,6 +8,7 @@ export interface IProduct extends Document {
     price: number;
     discount?: number | null;
     product_image: string;
+    already_sell: number;
     quantity: number;
 }
 
@@ -37,6 +38,10 @@ const ProductSchema: Schema<IProduct> = new mongoose.Schema({
     product_image: {
         type: String,
         required: [true, "Product thabnail is required"]
+    },
+    already_sell: {
+        type: Number,
+        default: 0
     },
     quantity: {
         type: Number,
