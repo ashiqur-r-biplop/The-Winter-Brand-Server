@@ -56,6 +56,20 @@ const updateProduct = catchAsync(async (req: Request, res: Response, next: NextF
 })
 
 
+const deleteProduct = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const productId = req.params?.id
+        await productModel.findByIdAndDelete(productId)
+        sendResponse(res, {
+            statusCode: httpStatus.OK,
+            success: true,
+            message: "product deleted successfully"
+        })
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+    }
+})
+
 const getProducts = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const products = await productModel.find()
@@ -73,6 +87,7 @@ const getProducts = catchAsync(async (req: Request, res: Response, next: NextFun
 const productController = {
     createProduct,
     updateProduct,
+    deleteProduct,
     getProducts
 }
 
