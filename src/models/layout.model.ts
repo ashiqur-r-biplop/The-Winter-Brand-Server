@@ -4,6 +4,17 @@ export interface IFaq extends Document {
     question: string;
     body: string
 }
+// TODO featured image
+export interface IFeaturedImagw extends Document {
+    // image_url
+}
+
+export interface ILayout extends Document {
+    type: string;
+    faqs: IFaq[];
+    featured_images: IFeaturedImagw[]
+}
+
 const FaqSchema: Schema<IFaq> = new mongoose.Schema({
     question: {
         type: String,
@@ -13,7 +24,9 @@ const FaqSchema: Schema<IFaq> = new mongoose.Schema({
         type: String,
         required: [true, "Body is required"]
     }
-}, { timestamps: true })
+})
+
+
 
 
 const faqModel: Model<IFaq> = mongoose.model("faq", FaqSchema)

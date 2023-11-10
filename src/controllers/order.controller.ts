@@ -26,8 +26,8 @@ const createOrder = catchAsync(async (req: Request, res: Response, next: NextFun
                 city: orderData.delivery_info.city,
             },
             promotions: {
-                phone_number: orderData?.promotions?.phone_number || "",
-                email: orderData?.promotions?.email || ""
+                phone_number: orderData?.promotions?.phone_number,
+                email: orderData?.promotions?.email
             },
         }
 

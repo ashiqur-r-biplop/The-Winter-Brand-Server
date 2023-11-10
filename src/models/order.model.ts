@@ -82,11 +82,9 @@ const OrderSchema: Schema<IOrder> = new mongoose.Schema({
     promotions: {
         phone_number: {
             type: String,
-            default: null
         },
         email: {
             type: String,
-            default: null
         },
     }
 }, { timestamps: true })
