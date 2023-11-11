@@ -49,9 +49,6 @@ const getUserRole = catchAsync(async (req: Request, res: Response, next: NextFun
 
         if (!email) return next(new ErrorHandler("email is require in query", httpStatus.BAD_REQUEST))
         const isCachedUser = nodeCache.has(`user:${email}`)
-
-
-
         if (isCachedUser) {
             const cachedUser = nodeCache.get(`user:${email}`)
             const user = JSON.parse(cachedUser as string)
@@ -63,7 +60,6 @@ const getUserRole = catchAsync(async (req: Request, res: Response, next: NextFun
                 }
             })
         } else {
-
             const user = await userModel.findOne({ email })
             if (user) {
                 nodeCache.set(`user:${user.email}`, JSON.stringify(user))
