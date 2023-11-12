@@ -1,31 +1,38 @@
-import mongoose, { Document, Model, Mongoose, Schema } from "mongoose";
+import mongoose, { Document, Model, Schema } from "mongoose";
 
 export interface IFaq extends Document {
     index: number;
     question: string;
     body: string
 }
-// TODO featured image
-export interface IFeaturedImagw extends Document {
+
+export interface IFeaturedImage extends Document {
     image_url: string
 }
 
 export interface ILayout extends Document {
     type: string;
     faqs: IFaq[];
-    featured_images: IFeaturedImagw[]
+    featured_images: IFeaturedImage[]
 }
 
-const FaqSchema: Schema<IFaq> = new mongoose.Schema({
+const FaqSchema = new Schema<IFaq>({
+    index: Number,
     question: String,
     body: String,
 })
 
+const FeaturedImageSchema = new Schema<IFeaturedImage>({
+    image_url: String
+})
 
-const LayoutSchema: Schema<ILayout> = new mongoose.Schema({
 
+const LayoutSchema = new Schema<ILayout>({
+    type: String,
+    faqs: [FaqSchema],
+    featured_images: [FeaturedImageSchema],
 }, { timestamps: true })
 
-const faqModel: Model<IFaq> = mongoose.model("faq", FaqSchema)
+const layoutModel: Model<ILayout> = mongoose.model("layout", LayoutSchema)
 
-export default faqModel
+export default layoutModel
