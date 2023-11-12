@@ -1,7 +1,6 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 
 export interface IFaq extends Document {
-    index: number;
     question: string;
     body: string
 }
@@ -17,7 +16,6 @@ export interface ILayout extends Document {
 }
 
 const FaqSchema = new Schema<IFaq>({
-    index: Number,
     question: String,
     body: String,
 })

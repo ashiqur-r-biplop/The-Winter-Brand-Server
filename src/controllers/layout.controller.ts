@@ -15,7 +15,7 @@ const createLayout = catchAsync(async (req: Request, res: Response, next: NextFu
                 const { faq } = req.body as any
                 const updatedFaqs = [
                     ...typeAlredyExits.faqs,
-                    { index: typeAlredyExits.faqs.length + 1, ...faq, }
+                    { ...faq, }
                 ]
                 await layoutModel.findByIdAndUpdate(typeAlredyExits._id, { faqs: updatedFaqs })
             }
@@ -32,7 +32,7 @@ const createLayout = catchAsync(async (req: Request, res: Response, next: NextFu
         } else {
             if (type === "FAQ") {
                 const { faq } = req.body as any
-                await layoutModel.create({ type: "FAQ", faqs: { index: 1, ...faq } })
+                await layoutModel.create({ type: "FAQ", faqs: { ...faq } })
             }
             else if (type === "FEATURED_IMAGE") {
                 const { image_url } = req.body as any
@@ -108,12 +108,60 @@ const deleteMultipleFeaturedImages = catchAsync(async (req: Request, res: Respon
     }
 })
 
+const getFaqs = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+        const data = await layoutModel.findOne({ type: "FAQ" })
+        if (data) {
+            return sendResponse(res, {
+                success: true,
+                statusCode: httpStatus.OK,
+                data: data.faqs
+            })
+        } else {
+            return sendResponse(res, {
+                success: true,
+                statusCode: httpStatus.OK,
+                data: []
+            })
+        }
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 400))
+    }
+})
+
+const getFeaturedImage = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+        const data = await layoutModel.findOne({ type: "FEATURED_IMAGE" })
+        if (data) {
+            return sendResponse(res, {
+                success: true,
+                statusCode: httpStatus.OK,
+                data: data.featured_images
+            })
+        } else {
+            return sendResponse(res, {
+                success: true,
+                statusCode: httpStatus.OK,
+                data: []
+            })
+        }
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 400))
+    }
+})
+
 
 
 const layoutController = {
     createLayout,
     deleteLayout,
-    deleteMultipleFeaturedImages
+    deleteMultipleFeaturedImages,
+    getFaqs,
+    getFeaturedImage
 }
 
 export default layoutController
