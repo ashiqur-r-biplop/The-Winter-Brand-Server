@@ -6,6 +6,7 @@ export interface IFaq extends Document {
 }
 
 export interface IFeaturedImage extends Document {
+    isChecked: boolean,
     image_url: string
 }
 
@@ -21,6 +22,10 @@ const FaqSchema = new Schema<IFaq>({
 })
 
 const FeaturedImageSchema = new Schema<IFeaturedImage>({
+    isChecked: {
+        type: Boolean,
+        default: false
+    },
     image_url: String
 })
 

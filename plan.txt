@@ -1,14 +1,1 @@
-akta user er jonno arekta admin er jonno
-admin er jeita oita admin verify midule wer bebohar korba
-poreu oi gulo delete o kora jbe
-maney FAQ Signle delete korar jonno akta pies lagbe
-user er review post er jonno apie lagbe
-post howar shomoy pending true diba
-porey data base thekey peding true jegulo achey oita admin ke dekkhanor jonno akta get apies lagbey
-akta approve korar jonno apies lagbey
-arekta remove korar jonno apies lagbey
-Is_approve je gulo true oitar 2 ta apie lagbey
-akta user er jonno
-arekta admin er jonno
-contact post korar jonno akta apie diba
-ar get korar jonno apie diba
+calculate discount price
