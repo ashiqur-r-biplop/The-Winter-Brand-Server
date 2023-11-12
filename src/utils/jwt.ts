@@ -43,7 +43,7 @@ const sendToken = (user: IUser, statusCode: number, res: Response) => {
 
 
 
-    nodeCache.set("user:" + user.email, JSON.stringify(user) as any)
+    nodeCache.set("user:" + user.email, JSON.stringify(user) as string)
     res.cookie("access_token", accessToken, accessTokenOption)
     res.cookie("refresh_token", refreshToken, refreshTokenOption)
     res.status(statusCode).json({
