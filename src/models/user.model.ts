@@ -10,7 +10,7 @@ export interface IUser extends Document {
 }
 
 
-const userSchema: Schema<IUser> = new mongoose.Schema({
+const userSchema = new Schema<IUser>({
     name: {
         type: String,
         required: [true, "Please enter your name"]

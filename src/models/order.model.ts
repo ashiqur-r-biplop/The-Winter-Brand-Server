@@ -23,7 +23,7 @@ export interface IOrder extends Document {
 }
 
 
-const OrderSchema: Schema<IOrder> = new mongoose.Schema({
+const OrderSchema = new Schema<IOrder>({
     name: {
         type: String,
         required: [true, "name is required"]

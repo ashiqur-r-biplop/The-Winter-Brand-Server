@@ -94,13 +94,28 @@ const getProducts = catchAsync(async (req: Request, res: Response, next: NextFun
         return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
     }
 })
+const getProduct = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const id = req.params?.id
+        if (!id) return next(new ErrorHandler("id is required", httpStatus.BAD_REQUEST))
+        const product = await productModel.findById(id)
+        sendResponse(res, {
+            statusCode: httpStatus.OK,
+            success: true,
+            data: product
+        })
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+    }
+})
 
 
 const productController = {
     createProduct,
     updateProduct,
     deleteProduct,
-    getProducts
+    getProducts,
+    getProduct
 }
 
 export default productController

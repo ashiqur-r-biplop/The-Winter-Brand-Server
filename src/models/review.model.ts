@@ -5,10 +5,9 @@ export interface IReview extends Document {
     name: string;
     review: string;
     email: string;
-    status: string;
 }
 
-const ReviewSchema: Schema<IReview> = new mongoose.Schema({
+const ReviewSchema = new Schema<IReview>({
     rating: {
         type: Number,
         required: [true, "rating is required"]
@@ -24,12 +23,7 @@ const ReviewSchema: Schema<IReview> = new mongoose.Schema({
     email: {
         type: String,
         required: [true, "email is required"]
-    },
-    status: {
-        type: String,
-        default: "pending",
-        enum: ["pending", "approved"]
-    },
+    }
 }, { timestamps: true })
 
 

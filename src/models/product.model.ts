@@ -14,7 +14,7 @@ export interface IProduct extends Document {
 }
 
 
-const ProductSchema: Schema<IProduct> = new mongoose.Schema({
+const ProductSchema = new Schema<IProduct>({
     product_name: {
         type: String,
         required: [true, "Product name is required"]

@@ -8,7 +8,7 @@ export interface IContact extends Document {
 }
 
 
-const contactSchema: Schema<IContact> = new mongoose.Schema({
+const contactSchema = new Schema<IContact>({
     name: {
         type: String,
         required: [true, "Name is required"]

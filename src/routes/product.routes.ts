@@ -14,5 +14,6 @@ productRouter.post("/create-product", productController.createProduct)
 productRouter.put("/update-product/:id", productController.updateProduct)
 productRouter.delete("/delete-product/:id", productController.deleteProduct)
 productRouter.get("/get-all-products", productController.getProducts)
+productRouter.get("/get-product/:id", productController.getProduct)
 
 export default productRouter
