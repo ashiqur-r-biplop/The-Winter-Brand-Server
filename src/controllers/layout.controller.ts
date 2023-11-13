@@ -4,6 +4,8 @@ import layoutModel from "../models/layout.model"
 import ErrorHandler from "../utils/ErrorHandler"
 import sendResponse from "../utils/sendResponse"
 import httpStatus from "http-status"
+import { ObjectId } from "mongodb"
+
 
 const createLayout = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -55,33 +57,10 @@ const createLayout = catchAsync(async (req: Request, res: Response, next: NextFu
 const updateFeaturedImage = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { _id, isChecked } = req.body as any
-        if (!_id || !isChecked.toString()) return next(new ErrorHandler("_id, isChecked, image_url  this fields is required", httpStatus.BAD_REQUEST))
+        if (!_id || !isChecked.toString()) return next(new ErrorHandler("_id, isChecked  this fields is required", httpStatus.BAD_REQUEST))
 
-        const typeAlredyExits = await layoutModel.findOne({ type: "FEATURED_IMAGE" })
+        const typeAlredyExits = await layoutModel.updateOne({ featured_images: { $elemMatch: { _id: new ObjectId(_id) } } }, { $set: { "featured_images.$.isChecked": isChecked } })
 
-        if (typeAlredyExits) {
-            const findingImage: any = typeAlredyExits.featured_images.find(image => image._id.toString() === _id)
-            if (!findingImage) return next(new ErrorHandler("wrong id provided", httpStatus.BAD_REQUEST))
-            console.log(findingImage)
-            const updatedFeaturedImage = {
-                _id: findingImage._id,
-                image_url: findingImage.image_url,
-                isChecked: isChecked
-            }
-            console.log(updatedFeaturedImage)
-            const updateFeatureImage = [
-                ...typeAlredyExits.featured_images,
-                { ...updatedFeaturedImage }
-            ]
-
-            await layoutModel.findByIdAndUpdate(_id, {
-                featured_images
-                    : updateFeatureImage
-            }, { new: true })
-
-
-
-        }
         sendResponse(res, {
             success: true,
             statusCode: httpStatus.CREATED,
