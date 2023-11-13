@@ -1,4 +1,4 @@
-calculate discount price
+# calculate discount price
 
 update featurd image status
 

@@ -1,20 +1,10 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
-
-
-export interface IProduct extends Document {
-    product_name: string;
-    product_description: string;
-    product_status?: string;
-    price: number;
-    regular_price?: number | null;
-    discount?: number | null;
-    product_image: string;
-    already_sell: number;
-    quantity: number;
-}
-
-
-const ProductSchema: Schema<IProduct> = new mongoose.Schema({
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const mongoose_1 = __importDefault(require("mongoose"));
+const ProductSchema = new mongoose_1.default.Schema({
     product_name: {
         type: String,
         required: [true, "Product name is required"]
@@ -32,9 +22,6 @@ const ProductSchema: Schema<IProduct> = new mongoose.Schema({
         type: Number,
         required: [true, "Product price is required"]
     },
-    regular_price: {
-        type: Number,
-    },
     discount: {
         type: Number,
         default: null
@@ -51,8 +38,6 @@ const ProductSchema: Schema<IProduct> = new mongoose.Schema({
         type: Number,
         required: [true, "Product Quantity is required"]
     }
-
-}, { timestamps: true })
-
-const productModel: Model<IProduct> = mongoose.model("product", ProductSchema)
-export default productModel
+}, { timestamps: true });
+const productModel = mongoose_1.default.model("product", ProductSchema);
+exports.default = productModel;

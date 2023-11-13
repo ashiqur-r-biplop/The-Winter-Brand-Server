@@ -52,6 +52,7 @@ const createOrder = catchAsync(async (req: Request, res: Response, next: NextFun
             const productQuantity = product?.quantity
             if (productQuantity > 0) {
                 product.quantity = product?.quantity - 1
+                product.already_sell = product.already_sell + 1
 
                 if (product.quantity === 0) {
                     product.product_status = "out of stock"
@@ -143,84 +144,84 @@ const getOrders = catchAsync(async (req: Request, res: Response, next: NextFunct
 
 // payments 
 
-const newPayment = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const amount = req.body?.amount
-        if (!amount) return next(new ErrorHandler("amount is required", httpStatus.BAD_REQUEST))
-        const payment = await stripe.paymentIntents.create({
-            amount: amount,
-            currency: "usd",
-            payment_method_types: ['card']
-            // automatic_payment_methods: {
-            //     enabled: true
-            // }
-        })
-        sendResponse(res, {
-            success: true,
-            statusCode: httpStatus.CREATED,
-            data: {
-                client_secret: payment.client_secret
-            }
-        })
+// const newPayment = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//         const amount = req.body?.amount
+//         if (!amount) return next(new ErrorHandler("amount is required", httpStatus.BAD_REQUEST))
+//         const payment = await stripe.paymentIntents.create({
+//             amount: amount,
+//             currency: "usd",
+//             payment_method_types: ['card']
+//             // automatic_payment_methods: {
+//             //     enabled: true
+//             // }
+//         })
+//         sendResponse(res, {
+//             success: true,
+//             statusCode: httpStatus.CREATED,
+//             data: {
+//                 client_secret: payment.client_secret
+//             }
+//         })
 
-    } catch (error: any) {
-        return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
-    }
-})
+//     } catch (error: any) {
+//         return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+//     }
+// })
 
 
 
-const newSubscribe = catchAsync(async (req, res, next) => {
-    try {
-        const { name, email, paymentMethod } = req.body;
+// const newSubscribe = catchAsync(async (req, res, next) => {
+//     try {
+//         const { name, email, paymentMethod } = req.body;
 
-        const customer = await stripe.customers.create({
-            email,
-            name,
-            payment_method: paymentMethod,
-            invoice_settings: { default_payment_method: paymentMethod },
-        });
+//         const customer = await stripe.customers.create({
+//             email,
+//             name,
+//             payment_method: paymentMethod,
+//             invoice_settings: { default_payment_method: paymentMethod },
+//         });
 
-        const product = await stripe.products.create({
-            name: "Yearly subscription",
-        });
+//         const product = await stripe.products.create({
+//             name: "Yearly subscription",
+//         });
 
-        const subscription = await stripe.subscriptions.create({
-            customer: customer.id,
-            items: [
-                {
-                    price_data: {
-                        currency: "USD",
-                        product: product.id,
-                        unit_amount: 500,
-                        recurring: {
-                            interval: "year",
-                        },
-                    },
-                },
-            ],
-            payment_settings: {
-                payment_method_types: ["card"],
-                save_default_payment_method: "on_subscription",
-            },
-            expand: ["latest_invoice.payment_intent"],
-        });
+//         const subscription = await stripe.subscriptions.create({
+//             customer: customer.id,
+//             items: [
+//                 {
+//                     price_data: {
+//                         currency: "USD",
+//                         product: product.id,
+//                         unit_amount: 500,
+//                         recurring: {
+//                             interval: "year",
+//                         },
+//                     },
+//                 },
+//             ],
+//             payment_settings: {
+//                 payment_method_types: ["card"],
+//                 save_default_payment_method: "on_subscription",
+//             },
+//             expand: ["latest_invoice.payment_intent"],
+//         });
 
-        const clientSecret = subscription?.latest_invoice?.payment_intent?.client_secret;
+//         const clientSecret = subscription?.latest_invoice?.payment_intent?.client_secret;
 
-        if (!clientSecret) {
-            throw new Error('Client secret not found in the subscription');
-        }
+//         if (!clientSecret) {
+//             throw new Error('Client secret not found in the subscription');
+//         }
 
-        res.json({
-            message: "Subscription successfully initiated",
-            clientSecret,
-        });
-    } catch (error: any) {
-        console.error(error);
-        return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST));
-    }
-});
+//         res.json({
+//             message: "Subscription successfully initiated",
+//             clientSecret,
+//         });
+//     } catch (error: any) {
+//         console.error(error);
+//         return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST));
+//     }
+// });
 
 
 
@@ -229,8 +230,8 @@ const orderController = {
     updateOrderStatus,
     deleteOrder,
     getOrders,
-    newPayment,
-    newSubscribe
+    // newPayment,
+    // newSubscribe
 }
 
 export default orderController

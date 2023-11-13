@@ -11,10 +11,16 @@ import productModel, { IProduct } from "../models/product.model";
 const createProduct = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const productData = req.body as IProduct
+        let tempPrice = productData.price
+        if (productData?.discount) {
+            const subtract = productData?.discount / 100 * productData.price
+            productData.price = productData.price - subtract
+        }
         const newProduct = {
             product_name: productData.product_name,
             product_description: productData.product_description,
             price: productData.price,
+            regular_price: productData?.discount ? tempPrice : null,
             discount: productData.discount || null,
             product_image: productData.product_image,
             quantity: productData.quantity,
@@ -34,10 +40,16 @@ const updateProduct = catchAsync(async (req: Request, res: Response, next: NextF
     try {
         const id = req.params?.id as string
         const productData = req.body as IProduct
+        let tempPrice = productData.price
+        if (productData?.discount) {
+            const subtract = productData?.discount / 100 * productData.price
+            productData.price = productData.price - subtract
+        }
         const updatedProductData = {
             product_name: productData.product_name,
             product_description: productData.product_description,
             price: productData.price,
+            regular_price: productData?.discount ? tempPrice : null,
             discount: productData.discount || null,
             product_image: productData.product_image,
             quantity: productData.quantity,
