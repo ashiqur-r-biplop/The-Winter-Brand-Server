@@ -15,6 +15,7 @@ import orderRouter from "./routes/order.routes"
 import marketingRouter from "./routes/marketing.routes"
 import contactRouter from "./routes/contact.routes"
 import layoutRouter from "./routes/layout.routes"
+import cartRouter from "./routes/cart.routes"
 
 export const app: Application = express()
 export const nodeCache = new NodeCache()
@@ -49,7 +50,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json())
 
 
-app.use("/api/v1", productRouter, userRouter, reviewRouter, orderRouter, marketingRouter, contactRouter, layoutRouter)
+app.use("/api/v1", productRouter, userRouter, reviewRouter, orderRouter, marketingRouter, contactRouter, layoutRouter, cartRouter)
 app.get("/test", (req: Request, res: Response) => {
     res.json({
         success: true,
