@@ -144,30 +144,30 @@ const getOrders = catchAsync(async (req: Request, res: Response, next: NextFunct
 
 // payments 
 
-// const newPayment = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const amount = req.body?.amount
-//         if (!amount) return next(new ErrorHandler("amount is required", httpStatus.BAD_REQUEST))
-//         const payment = await stripe.paymentIntents.create({
-//             amount: amount,
-//             currency: "usd",
-//             payment_method_types: ['card']
-//             // automatic_payment_methods: {
-//             //     enabled: true
-//             // }
-//         })
-//         sendResponse(res, {
-//             success: true,
-//             statusCode: httpStatus.CREATED,
-//             data: {
-//                 client_secret: payment.client_secret
-//             }
-//         })
+const newPayment = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const amount = req.body?.amount
+        if (!amount) return next(new ErrorHandler("amount is required", httpStatus.BAD_REQUEST))
+        const payment = await stripe.paymentIntents.create({
+            amount: amount,
+            currency: "usd",
+            payment_method_types: ['card']
+            // automatic_payment_methods: {
+            //     enabled: true
+            // }
+        })
+        sendResponse(res, {
+            success: true,
+            statusCode: httpStatus.CREATED,
+            data: {
+                client_secret: payment.client_secret
+            }
+        })
 
-//     } catch (error: any) {
-//         return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
-//     }
-// })
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+    }
+})
 
 
 
@@ -230,7 +230,7 @@ const orderController = {
     updateOrderStatus,
     deleteOrder,
     getOrders,
-    // newPayment,
+    newPayment,
     // newSubscribe
 }
 

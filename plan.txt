@@ -1,6 +1,6 @@
 # calculate discount price
 
-update featurd image status
+# update featurd image status
 
 
 # remove all pending reviews

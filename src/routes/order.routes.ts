@@ -16,7 +16,7 @@ const orderRouter = express.Router()
 
 
 orderRouter.post("/create-order", orderController.createOrder)
-// orderRouter.post("/payment", orderController.newPayment)
+orderRouter.post("/payment", orderController.newPayment)
 // orderRouter.post("/subscribe", orderController.newSubscribe)
 orderRouter.put("/update-order-status/:id", orderController.updateOrderStatus)
 orderRouter.delete("/delete-order/:id", orderController.deleteOrder)

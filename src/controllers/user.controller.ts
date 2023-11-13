@@ -32,16 +32,16 @@ const createUser = catchAsync(async (req: Request, res: Response, next: NextFunc
 const updateUserProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userData = req.body as IUser
-        if (!userData.id) return next(new ErrorHandler("id is requird", httpStatus.BAD_REQUEST))
+        if (!userData.email) return next(new ErrorHandler("id is requird", httpStatus.BAD_REQUEST))
         const updatedUserData = {
             name: userData.name,
-            avater: userData.avater,
-            phone_pumber: userData.phone_pumber,
+            avater: userData.avatar,
+            phone_pumber: userData.phone_number,
             location: userData.location,
             about: userData.about,
         }
 
-        await userModel.findByIdAndUpdate(userData.id, {
+        await userModel.updateOne({ email: userData.email }, {
             $set: updatedUserData
         }, { new: true })
 
