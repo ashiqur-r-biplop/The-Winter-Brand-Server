@@ -2,13 +2,12 @@
 
 update featurd image status
 
-frontend faq delete
 
 # remove all pending reviews
 
-update profile
+# update profile
 
-cart api
+# cart api
 
 
 # get single product

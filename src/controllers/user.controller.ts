@@ -29,6 +29,32 @@ const createUser = catchAsync(async (req: Request, res: Response, next: NextFunc
     }
 })
 
+const updateUserProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userData = req.body as IUser
+        if (!userData.id) return next(new ErrorHandler("id is requird", httpStatus.BAD_REQUEST))
+        const updatedUserData = {
+            name: userData.name,
+            avater: userData.avater,
+            phone_pumber: userData.phone_pumber,
+            location: userData.location,
+            about: userData.about,
+        }
+
+        await userModel.findByIdAndUpdate(userData.id, {
+            $set: updatedUserData
+        }, { new: true })
+
+        sendResponse(res, {
+            success: true,
+            statusCode: httpStatus.CREATED,
+            message: "user updated successfully"
+        })
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+    }
+})
+
 
 
 const getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -135,6 +161,7 @@ const logout = catchAsync(async (req: Request, res: Response, next: NextFunction
 
 const userController = {
     createUser,
+    updateUserProfile,
     getAllUsers,
     getUserRole,
     loginUser,

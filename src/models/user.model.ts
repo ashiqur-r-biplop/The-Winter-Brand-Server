@@ -3,9 +3,10 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 export interface IUser extends Document {
     name: string;
     email: string;
-    avater?: {
-        url?: string
-    }
+    avater?: string;
+    phone_pumber: string;
+    location: string;
+    about: string
     role?: string;
 }
 
@@ -21,6 +22,15 @@ const userSchema = new Schema<IUser>({
         unique: true
     },
     avater: {
+        type: String,
+    },
+    phone_pumber: {
+        type: String,
+    },
+    location: {
+        type: String,
+    },
+    about: {
         type: String,
     },
     role: {
