@@ -3,7 +3,7 @@ import ErrorHandler from "../utils/ErrorHandler";
 
 import sendResponse from "../utils/sendResponse";
 import httpStatus from "http-status";
-import catchAsync from "../middleware/asyncError.middlerware";
+import catchAsync from "../middleware/asyncError.middleware";
 import productModel, { IProduct } from "../models/product.model";
 
 

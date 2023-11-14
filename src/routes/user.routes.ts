@@ -17,6 +17,7 @@ userRouter.post("/login-user", userController.loginUser)
 userRouter.put("/update-user-profile", userController.updateUserProfile)
 userRouter.get("/get-all-users", userController.getAllUsers)
 userRouter.get("/get-user-role/:email", userController.getUserRole)
+userRouter.get("/get-user-profile/:email", userController.getProfileByEmail)
 userRouter.get("/logout", userController.logout)
 
 export default userRouter

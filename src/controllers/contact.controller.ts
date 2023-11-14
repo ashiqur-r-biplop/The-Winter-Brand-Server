@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express"
-import catchAsync from "../middleware/asyncError.middlerware"
+import catchAsync from "../middleware/asyncError.middleware"
 import ErrorHandler from "../utils/ErrorHandler"
 import httpStatus from "http-status"
 import contactModel, { IContact } from "../models/contact.model"

@@ -1,7 +1,7 @@
 
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken"
-import catchAsync from "./asyncError.middlerware";
+import catchAsync from "./asyncError.middleware";
 import ErrorHandler from "../utils/ErrorHandler";
 
 import httpStatus from "http-status"

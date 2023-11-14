@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express"
-import catchAsync from "../middleware/asyncError.middlerware"
+import catchAsync from "../middleware/asyncError.middleware"
 import ErrorHandler from "../utils/ErrorHandler"
 import httpStatus from "http-status"
 import contactModel, { IContact } from "../models/contact.model"
@@ -11,6 +11,7 @@ const createCart = catchAsync(async (req: Request, res: Response, next: NextFunc
         const cartData = req.body as ICart
         const newCart = {
             product_name: cartData.product_name,
+            product_id: cartData.product_id,
             price: cartData.price,
             product_image: cartData.product_image,
             email: cartData.email

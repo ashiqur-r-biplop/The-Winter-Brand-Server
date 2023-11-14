@@ -1,5 +1,5 @@
 import { NextFunction, Response, Request } from "express"
-import catchAsync from "../middleware/asyncError.middlerware"
+import catchAsync from "../middleware/asyncError.middleware"
 import ErrorHandler from "../utils/ErrorHandler"
 import httpStatus from "http-status"
 import reviewModel, { IReview } from "../models/review.model"

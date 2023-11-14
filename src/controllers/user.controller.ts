@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express"
 import jwt, { JwtPayload, Secret } from "jsonwebtoken"
 import httpStatus from "http-status"
-import catchAsync from "../middleware/asyncError.middlerware"
+import catchAsync from "../middleware/asyncError.middleware"
 import ErrorHandler from "../utils/ErrorHandler"
 import sendResponse from "../utils/sendResponse"
 import userModel, { IUser } from "../models/user.model"
@@ -32,11 +32,11 @@ const createUser = catchAsync(async (req: Request, res: Response, next: NextFunc
 const updateUserProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userData = req.body as IUser
-        if (!userData.email) return next(new ErrorHandler("id is requird", httpStatus.BAD_REQUEST))
+        if (!userData.email) return next(new ErrorHandler("id is required", httpStatus.BAD_REQUEST))
         const updatedUserData = {
             name: userData.name,
-            avater: userData.avatar,
-            phone_pumber: userData.phone_number,
+            avatar: userData.avatar,
+            phone_number: userData.phone_number,
             location: userData.location,
             about: userData.about,
         }
@@ -107,6 +107,26 @@ const getUserRole = catchAsync(async (req: Request, res: Response, next: NextFun
     }
 })
 
+const getProfileByEmail = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const email = req.params?.email
+
+        if (!email) return next(new ErrorHandler("email is required", httpStatus.BAD_REQUEST))
+        const userInfo = await userModel.findOne({ email })
+        sendResponse(res, {
+            success: true,
+            statusCode: httpStatus.OK,
+            data: userInfo
+        })
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+    }
+})
+
+
+
+
 interface ILoginRequest {
     email: string;
 }
@@ -116,7 +136,7 @@ const loginUser = catchAsync(async (req: Request, res: Response, next: NextFunct
         const { email } = req.body as ILoginRequest
 
         if (!email) {
-            return next(new ErrorHandler("plase enter email", httpStatus.BAD_REQUEST))
+            return next(new ErrorHandler("please enter email", httpStatus.BAD_REQUEST))
         }
 
         const user = await userModel.findOne({ email })
@@ -164,6 +184,7 @@ const userController = {
     updateUserProfile,
     getAllUsers,
     getUserRole,
+    getProfileByEmail,
     loginUser,
     logout
 }

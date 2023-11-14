@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express"
-import catchAsync from "../middleware/asyncError.middlerware"
+import catchAsync from "../middleware/asyncError.middleware"
 import layoutModel from "../models/layout.model"
 import ErrorHandler from "../utils/ErrorHandler"
 import sendResponse from "../utils/sendResponse"
