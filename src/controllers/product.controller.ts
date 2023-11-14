@@ -84,7 +84,15 @@ const deleteProduct = catchAsync(async (req: Request, res: Response, next: NextF
 
 const getProducts = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const products = await productModel.find()
+        const limit = req?.query?.limit as string
+
+        let products = []
+        if (typeof parseInt(limit) === "number") {
+            products = await productModel.find().limit(parseInt(limit))
+        } else {
+            products = await productModel.find()
+
+        }
         sendResponse(res, {
             statusCode: httpStatus.OK,
             success: true,
