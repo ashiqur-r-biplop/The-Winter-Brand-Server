@@ -43,11 +43,11 @@ const getReviews = catchAsync(async (req: Request, res: Response, next: NextFunc
         const sort = req.query?.sort === "des" ? -1 : 1
         let reviews;
         if (reviewsLimit && sort) {
-            reviews = await reviewModel.find().sort({ createdAt: sort }).limit(reviewsLimit)
+            reviews = await orderModel.find({ user_review: { $exists: true } }).select("user_review").sort({ createdAt: sort }).limit(reviewsLimit)
         } else if (reviewsLimit) {
-            reviews = await reviewModel.find().limit(reviewsLimit)
+            reviews = await reviewModel.find({ user_review: { $exists: true } }).select("user_review").limit(reviewsLimit)
         } else {
-            reviews = await reviewModel.find()
+            reviews = await reviewModel.find().select("user_review")
         }
 
         sendResponse(res, {
