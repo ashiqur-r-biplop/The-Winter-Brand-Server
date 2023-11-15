@@ -30,6 +30,10 @@ const createCart = catchAsync(async (req: Request, res: Response, next: NextFunc
     }
 })
 
+
+
+
+
 const updateCartQuantity = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const data = req.body
@@ -71,6 +75,31 @@ const getCartByEmail = catchAsync(async (req: Request, res: Response, next: Next
         return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
     }
 })
+const getIsCartExistByEmail = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { email, id } = req.params
+        if (!email || !id) return next(new ErrorHandler("email and id is required", httpStatus.BAD_REQUEST))
+
+        const cart = await cartModel.findById(id)
+        if (cart?.email === email) {
+            return sendResponse(res, {
+                success: false,
+                statusCode: httpStatus.CREATED,
+            })
+        } else {
+            sendResponse(res, {
+                success: true,
+                statusCode: httpStatus.CREATED,
+            })
+        }
+
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+    }
+})
+
+
+
 const deleteCart = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const id = req.params?.id
@@ -94,6 +123,7 @@ const cartController = {
     createCart,
     updateCartQuantity,
     getCartByEmail,
+    getIsCartExistByEmail,
     deleteCart
 }
 

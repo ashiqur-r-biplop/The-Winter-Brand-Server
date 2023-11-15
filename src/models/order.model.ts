@@ -1,6 +1,7 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 
 export interface IOrder extends Document {
+    order_type: "payment" | "subscription" | "cart",
     name: string;
     product_id: string;
     order_status: string;
@@ -24,6 +25,11 @@ export interface IOrder extends Document {
 
 
 const OrderSchema = new Schema<IOrder>({
+    order_type: {
+        type: String,
+        required: [true, "order type is required"],
+        enum: ["payment", "subscription", "cart"]
+    },
     name: {
         type: String,
         required: [true, "name is required"]

@@ -57,9 +57,29 @@ const updateUserProfile = catchAsync(async (req: Request, res: Response, next: N
 
 
 
+const updateUserRole = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { role, id } = req.body
+        console.log(role, id)
+        if (!role || !id) return next(new ErrorHandler("id and role is required", httpStatus.BAD_REQUEST))
+
+        await userModel.findByIdAndUpdate(id, {
+            $set: {
+                role: role
+            }
+        })
+        sendResponse(res, {
+            success: true,
+            statusCode: httpStatus.CREATED,
+            message: "user updated successfully"
+        })
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+    }
+})
 const getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const users = await userModel.find()
+        const users = await userModel.find().sort({ createdAt: -1 })
         sendResponse(res, {
             success: true,
             statusCode: httpStatus.CREATED,
@@ -182,6 +202,7 @@ const logout = catchAsync(async (req: Request, res: Response, next: NextFunction
 const userController = {
     createUser,
     updateUserProfile,
+    updateUserRole,
     getAllUsers,
     getUserRole,
     getProfileByEmail,

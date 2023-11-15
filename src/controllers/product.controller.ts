@@ -88,9 +88,9 @@ const getProducts = catchAsync(async (req: Request, res: Response, next: NextFun
 
         let products = []
         if (typeof parseInt(limit) === "number") {
-            products = await productModel.find().limit(parseInt(limit))
+            products = await productModel.find().sort({ createdAt: -1 }).limit(parseInt(limit))
         } else {
-            products = await productModel.find()
+            products = await productModel.find().sort({ createdAt: -1 })
 
         }
         sendResponse(res, {
