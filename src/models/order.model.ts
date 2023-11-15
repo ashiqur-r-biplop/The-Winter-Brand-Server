@@ -20,6 +20,11 @@ export interface IOrder extends Document {
         phone: string;
         apartment?: string;
     },
+    user_review: {
+        rating: number;
+        name: string;
+        review: string;
+    }
     promotions?: {
         phone_number?: string;
         email?: string;
@@ -98,6 +103,17 @@ const OrderSchema = new Schema<IOrder>({
         apartment: {
             type: String
         },
+    },
+    user_review: {
+        rating: {
+            type: String,
+        },
+        name: {
+            type: String,
+        },
+        review: {
+            type: String,
+        }
     },
     promotions: {
         phone_number: {

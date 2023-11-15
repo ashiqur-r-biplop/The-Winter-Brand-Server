@@ -4,18 +4,28 @@ import ErrorHandler from "../utils/ErrorHandler"
 import httpStatus from "http-status"
 import reviewModel, { IReview } from "../models/review.model"
 import sendResponse from "../utils/sendResponse"
-
+import orderModel, { IOrder } from "../models/order.model"
+// TODO  create order
 const createReview = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
+
+        const orderId = req?.body?.order_id
+
+        if (!orderId) return next(new ErrorHandler("order id required", httpStatus.OK))
         const reviewData = req.body as IReview
+        const order = await orderModel.findById(orderId)
+        if (!order) return next(new ErrorHandler("Invalid order id", httpStatus.BAD_REQUEST))
         const newReview = {
             rating: reviewData.rating,
             name: reviewData.name,
             review: reviewData.review,
-            email: reviewData.email
         }
 
-        await reviewModel.create(newReview)
+        order.user_review = newReview
+
+        await order?.save()
+
+
         sendResponse(res, {
             success: true,
             statusCode: httpStatus.CREATED,

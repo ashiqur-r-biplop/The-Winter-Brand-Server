@@ -35,7 +35,7 @@ const createOrder = catchAsync(
       // }
 
       const productId = orderData.product_id as string;
-      console.log(38, orderData.products_quantity)
+      console.log(38, orderData.email)
       const newOrder = {
         order_type: orderData.order_type,
         name: orderData.name,
