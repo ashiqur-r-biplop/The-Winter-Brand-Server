@@ -5,17 +5,23 @@ import httpStatus from "http-status"
 import contactModel, { IContact } from "../models/contact.model"
 import sendResponse from "../utils/sendResponse"
 import cartModel, { ICart } from "../models/cart.model"
+import productModel from "../models/product.model"
 
 const createCart = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const cartData = req.body as ICart
+        if (!cartData?.product_id) return next(new ErrorHandler("product id is required", httpStatus.BAD_REQUEST))
+        const product = await productModel.findById(cartData?.product_id)
+        if (!product) return next(new ErrorHandler("product not found", httpStatus.BAD_REQUEST))
         const newCart = {
             product_name: cartData.product_name,
             product_id: cartData.product_id,
             price: cartData.price,
             product_image: cartData.product_image,
-            email: cartData.email
+            email: cartData.email,
+            product_quantity: product.quantity
         }
+        console.log(24, newCart)
 
         await cartModel.create(newCart)
 

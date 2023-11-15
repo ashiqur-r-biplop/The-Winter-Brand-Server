@@ -16,6 +16,8 @@ export interface IOrder extends Document {
         address: string;
         postcode: number;
         city: string;
+        phone: string;
+        apartment?: string;
     },
     promotions?: {
         phone_number?: string;
@@ -49,11 +51,11 @@ const OrderSchema = new Schema<IOrder>({
     },
     products_price: {
         type: Number,
-        required: [true, "products price id is required"]
+        required: [true, "products price  is required"]
     },
     products_quantity: {
         type: Number,
-        required: [true, "products quantity id is required"]
+        required: [true, "products quantity is required"]
     },
     company: {
         type: String,
@@ -83,6 +85,13 @@ const OrderSchema = new Schema<IOrder>({
         city: {
             type: String,
             required: [true, "city is required"],
+        },
+        phone: {
+            type: String,
+            required: [true, "phone is required"],
+        },
+        apartment: {
+            type: String
         },
     },
     promotions: {

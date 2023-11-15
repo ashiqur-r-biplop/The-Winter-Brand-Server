@@ -41,7 +41,7 @@ const ProductSchema = new Schema<IProduct>({
     },
     product_image: {
         type: String,
-        required: [true, "Product thabnail is required"]
+        required: [true, "Product image is required"]
     },
     already_sell: {
         type: Number,
@@ -49,8 +49,9 @@ const ProductSchema = new Schema<IProduct>({
     },
     quantity: {
         type: Number,
-        required: [true, "Product Quantity is required"]
+        required: [true, "Product cart is required"]
     }
+
 
 }, { timestamps: true })
 

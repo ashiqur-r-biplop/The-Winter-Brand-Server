@@ -7,6 +7,7 @@ export interface ICart extends Document {
     quantity: number;
     product_image: string;
     email: string;
+    product_quantity?: number;
 }
 
 const CartSchema = new Schema<ICart>({
@@ -35,6 +36,10 @@ const CartSchema = new Schema<ICart>({
         type: String,
         required: [true, "email name is required"]
     },
+    product_quantity: {
+        type: Number,
+        required: [true, "Product Quantity is required"]
+    }
 
 })
 

@@ -16,25 +16,28 @@ const createOrder = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const orderData = req.body;
-      if (orderData?.payment_info) {
-        if ("id" in orderData?.payment_info) {
-          const paymentIntentId = orderData?.payment_info?.id;
-          const paymentIntent = await stripe.paymentIntents.retrieve(
-            paymentIntentId
-          );
-          if (paymentIntent.status !== "succeeded") {
-            return next(
-              new ErrorHandler(
-                "payment not authorized!",
-                httpStatus.BAD_GATEWAY
-              )
-            );
-          }
-        }
-      }
+      // console.log(orderData)
+      // if (orderData?.payment_info) {
+      //   if ("id" in orderData?.payment_info) {
+      //     const paymentIntentId = orderData?.payment_info?.id;
+      //     const paymentIntent = await stripe.paymentIntents.retrieve(
+      //       paymentIntentId
+      //     );
+      //     if (paymentIntent.status !== "succeeded") {
+      //       return next(
+      //         new ErrorHandler(
+      //           "payment not authorized!",
+      //           httpStatus.BAD_GATEWAY
+      //         )
+      //       );
+      //     }
+      //   }
+      // }
 
       const productId = orderData.product_id as string;
+      console.log(38, orderData.products_quantity)
       const newOrder = {
+        order_type: orderData.order_type,
         name: orderData.name,
         product_id: orderData.product_id,
         transaction_id: orderData.transaction_id,
@@ -48,6 +51,8 @@ const createOrder = catchAsync(
           address: orderData.delivery_info.address,
           postcode: orderData.delivery_info.postcode,
           city: orderData.delivery_info.city,
+          phone: orderData.delivery_info.phone,
+          apartment: orderData?.apartment
         },
         promotions: {
           phone_number: orderData?.promotions?.phone_number,
