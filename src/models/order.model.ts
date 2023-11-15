@@ -9,7 +9,8 @@ export interface IOrder extends Document {
     products_price: number;
     products_quantity: number;
     company?: string;
-    contact_email: string
+    contact_email: string;
+    email: string;
     delivery_info: {
         country: string;
         state: string;
@@ -64,6 +65,10 @@ const OrderSchema = new Schema<IOrder>({
     contact_email: {
         type: String,
         required: [true, "contact email is required"]
+    },
+    email: {
+        type: String,
+        required: [true, "email is required"]
     },
     delivery_info: {
         country: {

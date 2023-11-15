@@ -45,6 +45,7 @@ const createOrder = catchAsync(
         products_quantity: orderData.products_quantity,
         company: orderData.company,
         contact_email: orderData.contact_email,
+        email: orderData.email,
         delivery_info: {
           country: orderData.delivery_info.country,
           state: orderData.delivery_info.state,
@@ -174,6 +175,26 @@ const getOrders = catchAsync(
     }
   }
 );
+
+const getOrdersByEmail = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const email = req?.query?.email
+
+      if (!email) return next(new ErrorHandler("email is required", httpStatus.BAD_REQUEST))
+      const orders = await orderModel.find({ email }).select("name order_status email delivery_info.address createdAt").sort({ createdAt: -1 });
+      sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.CREATED,
+        data: orders,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST));
+    }
+  }
+);
+
+
 
 // payments
 
@@ -339,6 +360,7 @@ const orderController = {
   updateOrderStatus,
   deleteOrder,
   getOrders,
+  getOrdersByEmail,
   newPayment,
   newSubscribe,
   unsubscribe,

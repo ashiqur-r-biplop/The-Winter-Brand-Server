@@ -22,6 +22,7 @@ orderRouter.post("/unsubscribe", orderController.unsubscribe)
 orderRouter.put("/update-order-status/:id", orderController.updateOrderStatus)
 orderRouter.delete("/delete-order/:id", orderController.deleteOrder)
 orderRouter.get("/get-orders", orderController.getOrders)
+orderRouter.get("/get-orders-by-email", orderController.getOrdersByEmail)
 
 
 export default orderRouter
