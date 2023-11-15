@@ -2,7 +2,7 @@ import { NextFunction, Response, Request } from "express"
 import catchAsync from "../middleware/asyncError.middleware"
 import ErrorHandler from "../utils/ErrorHandler"
 import httpStatus from "http-status"
-import reviewModel, { IReview } from "../models/review.model"
+
 import sendResponse from "../utils/sendResponse"
 import orderModel, { IOrder } from "../models/order.model"
 // TODO  create order
@@ -12,7 +12,7 @@ const createReview = catchAsync(async (req: Request, res: Response, next: NextFu
         const orderId = req?.body?.order_id
 
         if (!orderId) return next(new ErrorHandler("order id required", httpStatus.OK))
-        const reviewData = req.body as IReview
+        const reviewData = req.body
         const order = await orderModel.findById(orderId)
         if (!order) return next(new ErrorHandler("Invalid order id", httpStatus.BAD_REQUEST))
         const newReview = {
@@ -20,7 +20,7 @@ const createReview = catchAsync(async (req: Request, res: Response, next: NextFu
             name: reviewData.name,
             review: reviewData.review,
         }
-
+        if (order?.user_review) return next(new ErrorHandler("Review already exist", httpStatus.BAD_REQUEST))
         order.user_review = newReview
 
         await order?.save()
@@ -43,11 +43,11 @@ const getReviews = catchAsync(async (req: Request, res: Response, next: NextFunc
         const sort = req.query?.sort === "des" ? -1 : 1
         let reviews;
         if (reviewsLimit && sort) {
-            reviews = await orderModel.find({ user_review: { $exists: true } }).select("user_review").sort({ createdAt: sort }).limit(reviewsLimit)
+            reviews = await orderModel.find({ user_review: { $exists: true } }).select("user_review email").sort({ createdAt: sort }).limit(reviewsLimit)
         } else if (reviewsLimit) {
-            reviews = await reviewModel.find({ user_review: { $exists: true } }).select("user_review").limit(reviewsLimit)
+            reviews = await orderModel.find({ user_review: { $exists: true } }).select("user_review email").limit(reviewsLimit)
         } else {
-            reviews = await reviewModel.find().select("user_review")
+            reviews = await orderModel.find({ user_review: { $exists: true } }).select("user_review email")
         }
 
         sendResponse(res, {
