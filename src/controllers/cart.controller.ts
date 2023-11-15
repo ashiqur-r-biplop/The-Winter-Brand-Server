@@ -86,7 +86,7 @@ const getIsCartExistByEmail = catchAsync(async (req: Request, res: Response, nex
         const { email, id } = req.query
         if (!email || !id) return next(new ErrorHandler("email and id is required", httpStatus.BAD_REQUEST))
 
-        const cart = await cartModel.findById(id)
+        const cart = await cartModel.findOne({ product_id: id })
         if (cart?.email === email) {
             return sendResponse(res, {
                 success: false,
