@@ -34,8 +34,8 @@ const getTotalCreatedData = catchAsync(async (req: Request, res: Response, next:
 const getRecentOrdersReviews = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
 
-        const reviews = await orderModel.find({ user_review: { $exists: true } }).sort({ createdAt: -1 }).limit(10)
-        const orders = await orderModel.find().sort({ createdAt: -1 }).select("+name  +transaction_id  +products_price  +products_quantity  +contact_email").limit(10)
+        const reviews = await orderModel.find({ user_review: { $exists: true } }).select("user_review email").sort({ createdAt: -1 }).limit(10)
+        const orders = await orderModel.find().sort({ createdAt: -1 }).select("name  transaction_id subscription_id  order_status contact_email createdAt").limit(10)
 
         const analytics = {
             reviews,
