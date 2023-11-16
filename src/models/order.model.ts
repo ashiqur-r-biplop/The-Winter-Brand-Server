@@ -1,16 +1,28 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 
+interface IProduct {
+    id?: string;
+    product_name?: string;
+    quantity?: number;
+    price?: number;
+}
+
 export interface IOrder extends Document {
     order_type: "payment" | "subscription" | "cart",
     name: string;
-    product_id: string;
+    products?: IProduct[];
     order_status: string;
     transaction_id: string;
-    products_price: number;
-    products_quantity: number;
     company?: string;
     contact_email: string;
     email: string;
+    packages?: {
+        type?: "personal" | "gift";
+        gender?: "male" | "female";
+        size?: "Adult" | "Kid's";
+        selected?: string[];
+        package?: "bundle one" | "bundle two";
+    };
     delivery_info: {
         country: string;
         state: string;
@@ -42,10 +54,22 @@ const OrderSchema = new Schema<IOrder>({
         type: String,
         required: [true, "name is required"]
     },
-    product_id: {
-        type: String,
-        required: [true, "product id is required"]
-    },
+    products: [
+        {
+            id: {
+                type: String
+            },
+            product_name: {
+                type: String
+            },
+            quantity: {
+                type: Number
+            },
+            price: {
+                type: Number
+            },
+        }
+    ],
     order_status: {
         type: String,
         default: "pending",
@@ -54,14 +78,6 @@ const OrderSchema = new Schema<IOrder>({
     transaction_id: {
         type: String,
         required: [true, "transaction id is required"]
-    },
-    products_price: {
-        type: Number,
-        required: [true, "products price  is required"]
-    },
-    products_quantity: {
-        type: Number,
-        required: [true, "products quantity is required"]
     },
     company: {
         type: String,
@@ -74,6 +90,23 @@ const OrderSchema = new Schema<IOrder>({
     email: {
         type: String,
         required: [true, "email is required"]
+    },
+    packages: {
+        type: {
+            type: String,
+        },
+        gender: {
+            type: String,
+        },
+        size: {
+            type: String,
+        },
+        selected: {
+            type: Array,
+        },
+        package: {
+            type: String,
+        },
     },
     delivery_info: {
         country: {

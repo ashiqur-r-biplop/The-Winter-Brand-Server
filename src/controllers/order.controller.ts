@@ -8,6 +8,7 @@ import productModel from "../models/product.model";
 import Stripe from "stripe";
 import config from "../config";
 import catchAsync from "../middleware/asyncError.middleware";
+import addOrder from "../services/order.service";
 const stripe = new Stripe(config.payment_secret || "", {
   apiVersion: "2023-10-16",
 });
@@ -16,87 +17,29 @@ const createOrder = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const orderData = req.body;
+
+
       // console.log(orderData)
-      // if (orderData?.payment_info) {
-      //   if ("id" in orderData?.payment_info) {
-      //     const paymentIntentId = orderData?.payment_info?.id;
-      //     const paymentIntent = await stripe.paymentIntents.retrieve(
-      //       paymentIntentId
-      //     );
-      //     if (paymentIntent.status !== "succeeded") {
-      //       return next(
-      //         new ErrorHandler(
-      //           "payment not authorized!",
-      //           httpStatus.BAD_GATEWAY
-      //         )
-      //       );
-      //     }
-      //   }
-      // }
+      if (orderData?.transaction_id) {
 
-      const productId = orderData.product_id as string;
-      console.log(38, orderData.email)
-      const newOrder = {
-        order_type: orderData.order_type,
-        name: orderData.name,
-        product_id: orderData.product_id,
-        transaction_id: orderData.transaction_id,
-        products_price: orderData.products_price,
-        products_quantity: orderData.products_quantity,
-        company: orderData.company,
-        contact_email: orderData.contact_email,
-        email: orderData.email,
-        delivery_info: {
-          country: orderData.delivery_info.country,
-          state: orderData.delivery_info.state,
-          address: orderData.delivery_info.address,
-          postcode: orderData.delivery_info.postcode,
-          city: orderData.delivery_info.city,
-          phone: orderData.delivery_info.phone,
-          apartment: orderData?.apartment
-        },
-        promotions: {
-          phone_number: orderData?.promotions?.phone_number,
-          email: orderData?.promotions?.email,
-        },
-      };
-
-      await orderModel.create(newOrder);
-      const product = await productModel.findById(productId);
-
-      if (product?.quantity) {
-        const productQuantity = product?.quantity;
-        if (productQuantity > 0) {
-          product.quantity = product?.quantity - 1;
-          product.already_sell = product.already_sell + 1;
-
-          if (product.quantity === 0) {
-            product.product_status = "out of stock";
-          }
-
-          await product.save();
-        } else {
+        const paymentIntentId = orderData?.transaction_id;
+        const paymentIntent = await stripe.paymentIntents.retrieve(
+          paymentIntentId
+        );
+        if (paymentIntent.status !== "succeeded") {
           return next(
             new ErrorHandler(
-              "This product is out of stock",
-              httpStatus.BAD_REQUEST
+              "payment not authorized!",
+              httpStatus.BAD_GATEWAY
             )
           );
         }
-      } else {
-        return next(
-          new ErrorHandler(
-            "This product is out of stock",
-            httpStatus.BAD_REQUEST
-          )
-        );
+
       }
 
-      sendResponse(res, {
-        success: true,
-        statusCode: httpStatus.CREATED,
-        message: "order added successfully",
-      });
+      addOrder(orderData, res, next)
+
+
     } catch (error: any) {
       return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST));
     }
