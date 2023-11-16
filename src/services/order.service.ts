@@ -39,7 +39,7 @@ const addOrder = catchAsync(async (orderData: any, res: Response, next: NextFunc
                     size: orderData.packages.size,
                     selected: orderData.packages.selected,
                     package: orderData.packages.package,
-                    price: orderData.packages.package === "bundle_one" ? 49 : orderData.packages.package === "bundle_one" ? 90 : 0,
+                    price: orderData.products_price,
                     gift: {
                         gift_message: orderData?.gift?.gift_message,
                         gift_recipient_email: orderData?.gift?.gift_recipient_email,
