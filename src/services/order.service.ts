@@ -13,10 +13,19 @@ const addOrder = catchAsync(async (orderData: any, res: Response, next: NextFunc
     try {
         if (orderData.order_type === "payment" || orderData.order_type === "subscription") {
             if (!orderData?.packages) return next(new ErrorHandler("packages data required", httpStatus.BAD_REQUEST))
+            if (orderData.order_type === "payment") {
+                if (!orderData.transaction_id) return next(new ErrorHandler("transaction id is required", httpStatus.BAD_REQUEST))
+            }
+            if (orderData.order_type === "subscription") {
+                if (!orderData.subscription_id) return next(new ErrorHandler("subscription id is required", httpStatus.BAD_REQUEST))
+            }
+
+
             const newOrder = {
                 order_type: orderData.order_type,
                 name: orderData.name,
                 transaction_id: orderData.transaction_id,
+                subscription_id: orderData.subscription_id,
                 company: orderData.company,
                 contact_email: orderData.contact_email,
                 email: orderData.email,
@@ -43,6 +52,22 @@ const addOrder = catchAsync(async (orderData: any, res: Response, next: NextFunc
             };
 
             await orderModel.create(newOrder);
+
+            if (orderData.order_type === "subscription") {
+                sendResponse(res, {
+                    success: true,
+                    statusCode: httpStatus.CREATED,
+                    message: "subscription successfully",
+                });
+            }
+            if (orderData.order_type === "payment") {
+                sendResponse(res, {
+                    success: true,
+                    statusCode: httpStatus.CREATED,
+                    message: "order successfully",
+                });
+            }
+
         }
         else if (orderData.order_type === "cart") {
             if (!orderData?.products) return next(new ErrorHandler("product data is required", httpStatus.BAD_REQUEST))

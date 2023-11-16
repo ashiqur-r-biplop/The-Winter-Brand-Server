@@ -12,7 +12,8 @@ export interface IOrder extends Document {
     name: string;
     products?: IProduct[];
     order_status: string;
-    transaction_id: string;
+    transaction_id?: string;
+    subscription_id?: string;
     company?: string;
     contact_email: string;
     email: string;
@@ -77,7 +78,9 @@ const OrderSchema = new Schema<IOrder>({
     },
     transaction_id: {
         type: String,
-        required: [true, "transaction id is required"]
+    },
+    subscription_id: {
+        type: String,
     },
     company: {
         type: String,

@@ -18,9 +18,7 @@ const createOrder = catchAsync(
     try {
       const orderData = req.body;
 
-
-      // console.log(orderData)
-      if (orderData?.transaction_id) {
+      if (orderData.order_type === "subscription" && orderData?.transaction_id) {
 
         const paymentIntentId = orderData?.transaction_id;
         const paymentIntent = await stripe.paymentIntents.retrieve(
