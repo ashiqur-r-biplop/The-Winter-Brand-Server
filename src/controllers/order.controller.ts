@@ -166,57 +166,7 @@ const newPayment = catchAsync(
   }
 );
 
-// const newSubscribe = catchAsync(async (req, res, next) => {
-//     try {
-//         const { name, email, paymentMethod } = req.body;
 
-//         const customer = await stripe.customers.create({
-//             email,
-//             name,
-//             payment_method: paymentMethod,
-//             invoice_settings: { default_payment_method: paymentMethod },
-//         });
-
-//         const product = await stripe.products.create({
-//             name: "Yearly subscription",
-//         });
-
-//         const subscription = await stripe.subscriptions.create({
-//             customer: customer.id,
-//             items: [
-//                 {
-//                     price_data: {
-//                         currency: "USD",
-//                         product: product.id,
-//                         unit_amount: 500,
-//                         recurring: {
-//                             interval: "year",
-//                         },
-//                     },
-//                 },
-//             ],
-//             payment_settings: {
-//                 payment_method_types: ["card"],
-//                 save_default_payment_method: "on_subscription",
-//             },
-//             expand: ["latest_invoice.payment_intent"],
-//         });
-
-//         const clientSecret = subscription?.latest_invoice?.payment_intent?.client_secret;
-
-//         if (!clientSecret) {
-//             throw new Error('Client secret not found in the subscription');
-//         }
-
-//         res.json({
-//             message: "Subscription successfully initiated",
-//             clientSecret,
-//         });
-//     } catch (error: any) {
-//         console.error(error);
-//         return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST));
-//     }
-// });
 const newSubscribe = catchAsync(async (req, res, next) => {
   const { name, email, paymentMethod, amount } = req.body;
 
@@ -296,6 +246,39 @@ const unsubscribe = catchAsync(async (req, res, next) => {
 });
 
 
+const getInvoiceById = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const orderId = req?.params?.id
+
+    if (!orderId) return next(new ErrorHandler("order id required", httpStatus.BAD_REQUEST))
+    const order = await orderModel.findById(orderId).select("name packages delivery_info.address delivery_info.phone contact_email createdAt products order_type")
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      data: order
+    })
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+  }
+})
+
+// only admin 
+const getSingleOrder = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const orderId = req?.params?.id
+
+    if (!orderId) return next(new ErrorHandler("order id required", httpStatus.BAD_REQUEST))
+    const order = await orderModel.findById(orderId)
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      data: order
+    })
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+  }
+})
+
 const orderController = {
   createOrder,
   updateOrderStatus,
@@ -305,6 +288,8 @@ const orderController = {
   newPayment,
   newSubscribe,
   unsubscribe,
+  getInvoiceById,
+  getSingleOrder
 };
 
 export default orderController;
