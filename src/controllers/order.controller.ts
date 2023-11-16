@@ -57,11 +57,14 @@ const updateOrderStatus = catchAsync(
           new ErrorHandler("status is required", httpStatus.BAD_REQUEST)
         );
       }
+
+
+
       const statusOptions = [
         "pending",
-        "processing",
-        "placed order",
         "completed",
+        "returned",
+        "canceled",
       ];
       if (!statusOptions.includes(status)) {
         return next(new ErrorHandler("invalid status", httpStatus.BAD_REQUEST));
