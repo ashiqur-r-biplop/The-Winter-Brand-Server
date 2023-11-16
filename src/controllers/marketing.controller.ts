@@ -7,7 +7,7 @@ import sendResponse from "../utils/sendResponse"
 
 const getEmailMarketingData = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const emailMarketingData = await orderModel.find({ "promotions.email": { $exists: true } }).select("promotions.email name")
+        const emailMarketingData = await orderModel.find({ "promotions.email": { $type: "string" } }).select("promotions.email name")
 
         sendResponse(res, {
             success: true,
@@ -20,7 +20,7 @@ const getEmailMarketingData = catchAsync(async (req: Request, res: Response, nex
 })
 const getPhoneMarketingData = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const phoneMarketingData = await orderModel.find({ "promotions.phone_number": { $exists: true } }).select("promotions.phone_number name")
+        const phoneMarketingData = await orderModel.find({ "promotions.phone_number": { $type: "string" } }).select("promotions.phone_number name")
 
         sendResponse(res, {
             success: true,
