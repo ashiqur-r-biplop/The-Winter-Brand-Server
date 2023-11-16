@@ -20,7 +20,7 @@ const createReview = catchAsync(async (req: Request, res: Response, next: NextFu
             name: reviewData.name,
             review: reviewData.review,
         }
-        if (order?.user_review) return next(new ErrorHandler("Review already exist", httpStatus.BAD_REQUEST))
+
         order.user_review = newReview
 
         await order?.save()
