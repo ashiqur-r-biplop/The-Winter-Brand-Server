@@ -22,7 +22,14 @@ export interface IOrder extends Document {
         gender?: "male" | "female";
         size?: "Adult" | "Kid's";
         selected?: string[];
-        package?: "bundle one" | "bundle two";
+        package?: string;
+        price: number;
+        gift: {
+            gift_message: string;
+            gift_recipient_email: string;
+            gift_message_date: Date,
+            shipping_date: Date;
+        }
     };
     delivery_info: {
         country: string;
@@ -110,6 +117,23 @@ const OrderSchema = new Schema<IOrder>({
         package: {
             type: String,
         },
+        price: {
+            type: Number,
+        },
+        gift: {
+            gift_message: {
+                type: String,
+            },
+            gift_recipient_email: {
+                type: String,
+            },
+            gift_message_date: {
+                type: Date
+            },
+            shipping_date: {
+                type: Date
+            }
+        }
     },
     delivery_info: {
         country: {

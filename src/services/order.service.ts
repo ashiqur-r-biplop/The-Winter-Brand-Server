@@ -19,6 +19,10 @@ const addOrder = catchAsync(async (orderData: any, res: Response, next: NextFunc
             if (orderData.order_type === "subscription") {
                 if (!orderData.subscription_id) return next(new ErrorHandler("subscription id is required", httpStatus.BAD_REQUEST))
             }
+            console.log(orderData.gift)
+            if (orderData.packages.type === "gift") {
+                if (!orderData.gift.gift_message || !orderData.gift.gift_recipient_email || !orderData.gift.gift_message_date || !orderData.gift.shipping_date) return next(new ErrorHandler("gift data is required", httpStatus.BAD_REQUEST))
+            }
 
 
             const newOrder = {
@@ -35,6 +39,13 @@ const addOrder = catchAsync(async (orderData: any, res: Response, next: NextFunc
                     size: orderData.packages.size,
                     selected: orderData.packages.selected,
                     package: orderData.packages.package,
+                    price: orderData.packages.package === "bundle_one" ? 49 : orderData.packages.package === "bundle_one" ? 90 : 0,
+                    gift: {
+                        gift_message: orderData?.gift?.gift_message,
+                        gift_recipient_email: orderData?.gift?.gift_recipient_email,
+                        gift_message_date: orderData?.gift?.gift_message_date,
+                        shipping_date: orderData?.gift?.shipping_date
+                    }
                 },
                 delivery_info: {
                     country: orderData.delivery_info.country,
@@ -113,38 +124,6 @@ const addOrder = catchAsync(async (orderData: any, res: Response, next: NextFunc
             };
 
             await orderModel.create(newOrder);
-
-            // products.forEach(product => {
-            //     if (product?.quantity) {
-            //         const productQuantity = product?.quantity;
-            //         if (productQuantity > 0) {
-            //             product.quantity = product?.quantity - 1;
-            //             product.already_sell = product.already_sell + 1;
-
-            //             if (product.quantity === 0) {
-            //                 product.product_status = "out of stock";
-            //             }
-
-
-            //         } else {
-            //             return next(
-            //                 new ErrorHandler(
-            //                     "This product is out of stock",
-            //                     httpStatus.BAD_REQUEST
-            //                 )
-            //             );
-            //         }
-            //     } else {
-            //         return next(
-            //             new ErrorHandler(
-            //                 "This product is out of stock",
-            //                 httpStatus.BAD_REQUEST
-            //             )
-            //         );
-            //     }
-            // })
-
-            // await products.save();
 
 
             sendResponse(res, {

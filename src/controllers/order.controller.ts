@@ -48,8 +48,9 @@ const createOrder = catchAsync(
 const updateOrderStatus = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const orderId = req.params?.id;
+      const orderId = req.body.order_id;
       const status = req.body?.order_status;
+      if (!orderId || !status) return next(new ErrorHandler("order id and status is required", httpStatus.BAD_REQUEST))
 
       if (!status) {
         return next(
