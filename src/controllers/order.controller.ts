@@ -122,6 +122,32 @@ const getOrders = catchAsync(
     }
   }
 );
+const searchOrders = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const query = req?.params?.query
+      if (!query) return next(new ErrorHandler("search query is required", httpStatus.BAD_REQUEST))
+      let skip: number = parseInt((req?.query?.skip || "0") as string)
+      let limit: number = parseInt((req?.query?.limit || "20") as string)
+      const orders = await orderModel.find(
+        {
+          $or: [
+            { transaction_id: { $regex: query, $options: "i" } },
+            { subscription_id: { $regex: query, $options: "i" } }
+          ]
+        }
+      ).sort({ createdAt: -1 }).skip(skip).limit(limit)
+      // const orders = await orderModel.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
+      sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.CREATED,
+        data: orders,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST));
+    }
+  }
+);
 
 const getOrdersByEmail = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -290,6 +316,7 @@ const orderController = {
   updateOrderStatus,
   deleteOrder,
   getOrders,
+  searchOrders,
   getOrdersByEmail,
   newPayment,
   newSubscribe,

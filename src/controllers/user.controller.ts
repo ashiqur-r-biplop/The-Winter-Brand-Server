@@ -91,6 +91,31 @@ const getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFun
         return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
     }
 })
+
+const searchUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const query = req?.params?.query
+        if (!query) return next(new ErrorHandler("search query is required", httpStatus.BAD_REQUEST))
+        let skip: number = parseInt((req?.query?.skip || "0") as string)
+        let limit: number = parseInt((req?.query?.limit || "20") as string)
+        const users = await userModel.find(
+            {
+                $or: [
+                    { name: { $regex: query, $options: "i" } },
+                    { email: { $regex: query, $options: "i" } }
+                ]
+            }
+        ).sort({ createdAt: -1 }).skip(skip).limit(limit)
+        // const users = await userModel.find()
+        sendResponse(res, {
+            success: true,
+            statusCode: httpStatus.CREATED,
+            data: users
+        })
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+    }
+})
 const getUserRole = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const email = req.params?.email as string
@@ -206,6 +231,7 @@ const userController = {
     updateUserProfile,
     updateUserRole,
     getAllUsers,
+    searchUsers,
     getUserRole,
     getProfileByEmail,
     loginUser,

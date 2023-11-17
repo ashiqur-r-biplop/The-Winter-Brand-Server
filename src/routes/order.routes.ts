@@ -22,6 +22,7 @@ orderRouter.post("/unsubscribe", orderController.unsubscribe)
 orderRouter.put("/update-order-status", orderController.updateOrderStatus)
 orderRouter.delete("/delete-order/:id", orderController.deleteOrder)
 orderRouter.get("/get-orders", orderController.getOrders)
+orderRouter.get("/search-orders/:query", orderController.searchOrders)
 orderRouter.get("/get-orders-by-email", orderController.getOrdersByEmail)
 orderRouter.get("/get-invoice/:id", orderController.getInvoiceById)
 // only admin 
