@@ -34,7 +34,11 @@ const createContact = catchAsync(async (req: Request, res: Response, next: NextF
 })
 const getAllContacts = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const contacts = await contactModel.find()
+        let skip: number = parseInt((req?.query?.skip || "0") as string)
+        let limit: number = parseInt((req?.query?.limit || "20") as string)
+
+
+        const contacts = await contactModel.find().skip(skip).limit(limit)
         sendResponse(res, {
             success: true,
             statusCode: httpStatus.OK,

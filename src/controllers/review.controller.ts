@@ -39,17 +39,10 @@ const createReview = catchAsync(async (req: Request, res: Response, next: NextFu
 
 const getReviews = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const reviewsLimit = parseInt(req.query?.limit as string)
-        const sort = req.query?.sort === "des" ? -1 : 1
-        let reviews;
-        if (reviewsLimit && sort) {
-            reviews = await orderModel.find({ user_review: { $exists: true } }).select("user_review email").sort({ createdAt: sort }).limit(reviewsLimit)
-        } else if (reviewsLimit) {
-            reviews = await orderModel.find({ user_review: { $exists: true } }).select("user_review email").limit(reviewsLimit)
-        } else {
-            reviews = await orderModel.find({ user_review: { $exists: true } }).select("user_review email")
-        }
+        let skip: number = parseInt((req?.query?.skip || "0") as string)
+        let limit: number = parseInt((req?.query?.limit || "20") as string)
 
+        const reviews = await orderModel.find({ user_review: { $exists: true } }).select("user_review email").sort({ createdAt: -1 }).skip(skip).limit(limit)
         sendResponse(res, {
             success: true,
             statusCode: httpStatus.OK,

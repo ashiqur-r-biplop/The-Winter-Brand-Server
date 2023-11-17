@@ -84,15 +84,13 @@ const deleteProduct = catchAsync(async (req: Request, res: Response, next: NextF
 
 const getProducts = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const limit = req?.query?.limit as string
+        let skip: number = parseInt((req?.query?.skip || "0") as string)
+        let limit: number = parseInt((req?.query?.limit || "20") as string)
 
-        let products = []
-        if (typeof parseInt(limit) === "number") {
-            products = await productModel.find().sort({ createdAt: -1 }).limit(parseInt(limit))
-        } else {
-            products = await productModel.find().sort({ createdAt: -1 })
 
-        }
+
+        const products = await productModel.find().sort({ createdAt: -1 }).skip(skip).limit(limit)
+
         sendResponse(res, {
             statusCode: httpStatus.OK,
             success: true,

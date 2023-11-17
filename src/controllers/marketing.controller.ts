@@ -5,9 +5,13 @@ import httpStatus from "http-status"
 import orderModel from "../models/order.model"
 import sendResponse from "../utils/sendResponse"
 
+
 const getEmailMarketingData = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const emailMarketingData = await orderModel.find({ "promotions.email": { $type: "string" } }).select("promotions.email name")
+
+        let skip: number = parseInt((req?.query?.skip || "0") as string)
+        let limit: number = parseInt((req?.query?.limit || "20") as string)
+        const emailMarketingData = await orderModel.find({ "promotions.email": { $type: "string" } }).select("promotions.email name").skip(skip).limit(limit)
 
         sendResponse(res, {
             success: true,
@@ -20,7 +24,9 @@ const getEmailMarketingData = catchAsync(async (req: Request, res: Response, nex
 })
 const getPhoneMarketingData = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const phoneMarketingData = await orderModel.find({ "promotions.phone_number": { $type: "string" } }).select("promotions.phone_number name")
+        let skip: number = parseInt((req?.query?.skip || "0") as string)
+        let limit: number = parseInt((req?.query?.limit || "20") as string)
+        const phoneMarketingData = await orderModel.find({ "promotions.phone_number": { $type: "string" } }).select("promotions.phone_number name").skip(skip).limit(limit)
 
         sendResponse(res, {
             success: true,

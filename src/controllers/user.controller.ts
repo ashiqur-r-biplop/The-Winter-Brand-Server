@@ -79,7 +79,9 @@ const updateUserRole = catchAsync(async (req: Request, res: Response, next: Next
 })
 const getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const users = await userModel.find().sort({ createdAt: -1 })
+        let skip: number = parseInt((req?.query?.skip || "0") as string)
+        let limit: number = parseInt((req?.query?.limit || "20") as string)
+        const users = await userModel.find().sort({ createdAt: -1 }).skip(skip).limit(limit)
         sendResponse(res, {
             success: true,
             statusCode: httpStatus.CREATED,
