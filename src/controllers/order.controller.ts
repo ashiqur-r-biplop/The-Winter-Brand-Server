@@ -112,10 +112,14 @@ const getOrders = catchAsync(
       let skip: number = parseInt((req?.query?.skip || "0") as string)
       let limit: number = parseInt((req?.query?.limit || "20") as string)
       const orders = await orderModel.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
+      const totalOrders = await orderModel.estimatedDocumentCount()
       sendResponse(res, {
         success: true,
         statusCode: httpStatus.CREATED,
         data: orders,
+        meta: {
+          total: totalOrders
+        }
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST));

@@ -82,10 +82,14 @@ const getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFun
         let skip: number = parseInt((req?.query?.skip || "0") as string)
         let limit: number = parseInt((req?.query?.limit || "20") as string)
         const users = await userModel.find().sort({ createdAt: -1 }).skip(skip).limit(limit)
+        const totalUsers = await userModel.estimatedDocumentCount()
         sendResponse(res, {
             success: true,
             statusCode: httpStatus.CREATED,
-            data: users
+            data: users,
+            meta: {
+                total: totalUsers
+            }
         })
     } catch (error: any) {
         return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
