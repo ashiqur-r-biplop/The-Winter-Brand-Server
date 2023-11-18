@@ -15,6 +15,7 @@ orderRouter.get("/get-invoice/:id", isAuthenticated, orderController.getInvoiceB
 orderRouter.delete("/delete-order/:id", isAuthenticated, authorizeRoles(USER_ROLE.ADMIN), orderController.deleteOrder)
 orderRouter.put("/update-order-status", isAuthenticated, authorizeRoles(USER_ROLE.ADMIN), orderController.updateOrderStatus)
 orderRouter.get("/search-orders/:query", isAuthenticated, authorizeRoles(USER_ROLE.ADMIN), orderController.searchOrders)
+
 orderRouter.get("/get-orders", isAuthenticated, authorizeRoles(USER_ROLE.ADMIN), orderController.getOrders)
 orderRouter.get("/get-order/:id", isAuthenticated, authorizeRoles(USER_ROLE.ADMIN), orderController.getSingleOrder)
 

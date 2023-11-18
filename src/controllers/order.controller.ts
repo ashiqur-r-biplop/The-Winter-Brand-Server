@@ -112,13 +112,22 @@ const getOrders = catchAsync(
       let skip: number = parseInt((req?.query?.skip || "0") as string)
       let limit: number = parseInt((req?.query?.limit || "20") as string)
       const orders = await orderModel.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
-      const totalOrders = await orderModel.estimatedDocumentCount()
+      // const totalOrderByCartAndPay = await orderModel.countDocuments({ $or: [{ order_type: "cart" }, { order_type: "payment" }] })
+      // const totalSubscription = await orderModel.countDocuments({ order_type: "subscription" })
+
+      const cartPaymentQuery = { order_type: { $in: ['payment', 'cart'] } };
+      const subscriptionQuery = { order_type: 'subscription' };
+      const cartPaymentCount = await orderModel.countDocuments(cartPaymentQuery);
+      const subscriptionCount = await orderModel.countDocuments(subscriptionQuery);
+      // const totalSubscription = await orderModel.countDocuments({ order_type: "subscription" })
+
       sendResponse(res, {
         success: true,
         statusCode: httpStatus.CREATED,
         data: orders,
         meta: {
-          total: totalOrders
+          payment: cartPaymentCount,
+          subscription: subscriptionCount
         }
       });
     } catch (error: any) {
