@@ -10,8 +10,9 @@ const reviewRouter = express.Router()
 // reviewRouter.get("/get-all-reviews", isAuthenticated, authorizeRoles(USER_ROLE.ADMIN), reviewController.getAllReviews)
 // reviewRouter.get("/get-reviews", reviewController.getReviews)
 
-reviewRouter.post("/create-review", reviewController.createReview)
-reviewRouter.get("/get-all-reviews", reviewController.getReviews)
+reviewRouter.post("/create-review", isAuthenticated, reviewController.createReview)
+// only admin
+reviewRouter.get("/get-all-reviews", isAuthenticated, authorizeRoles(USER_ROLE.ADMIN), reviewController.getReviews)
 
 
 
