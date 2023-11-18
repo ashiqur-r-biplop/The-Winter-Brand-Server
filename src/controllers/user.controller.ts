@@ -60,7 +60,7 @@ const updateUserProfile = catchAsync(async (req: Request, res: Response, next: N
 const updateUserRole = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { role, id } = req.body
-        console.log(role, id)
+
         if (!role || !id) return next(new ErrorHandler("id and role is required", httpStatus.BAD_REQUEST))
 
         await userModel.findByIdAndUpdate(id, {

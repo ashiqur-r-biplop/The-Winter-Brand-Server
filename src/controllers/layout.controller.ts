@@ -106,7 +106,7 @@ const deleteLayout = catchAsync(async (req: Request, res: Response, next: NextFu
 const deleteMultipleFeaturedImages = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { images_id } = req.body
-        console.log(images_id)
+
 
         if (!images_id) return next(new ErrorHandler("images id required", httpStatus.BAD_REQUEST))
 

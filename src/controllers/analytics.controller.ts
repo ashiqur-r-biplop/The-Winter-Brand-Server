@@ -4,7 +4,7 @@ import httpStatus from "http-status"
 import ErrorHandler from "../utils/ErrorHandler"
 import sendResponse from "../utils/sendResponse"
 import userModel from "../models/user.model"
-import orderModel from "../models/order.model"
+import orderModel, { IOrder } from "../models/order.model"
 import contactModel from "../models/contact.model"
 
 
@@ -14,11 +14,24 @@ const getTotalCreatedData = catchAsync(async (req: Request, res: Response, next:
         const totalOrder = await orderModel.estimatedDocumentCount()
         const totalReviews = await orderModel.find({ user_review: { $exists: true } }).countDocuments()
         const totalContacts = await contactModel.estimatedDocumentCount()
+        const orders: any = await orderModel.find()
+        let totalEarnings = 0;
+
+        orders.forEach((order: any) => {
+            if (order.packages && order.packages.price) {
+                totalEarnings += order.packages.price;
+            } else if (order.products && order.products.length > 0) {
+                order.products.forEach((product: any) => {
+                    totalEarnings += product.price * product.quantity;
+                });
+            }
+        });
         const analytics = {
             users: totalUser,
             orders: totalOrder,
             reviews: totalReviews,
-            contacts: totalContacts
+            contacts: totalContacts,
+            earnings: totalEarnings
 
         }
         sendResponse(res, {

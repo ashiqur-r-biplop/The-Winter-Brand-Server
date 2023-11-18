@@ -21,7 +21,7 @@ const createCart = catchAsync(async (req: Request, res: Response, next: NextFunc
             email: cartData.email,
             product_quantity: product.quantity
         }
-        console.log(24, newCart)
+
 
         await cartModel.create(newCart)
 

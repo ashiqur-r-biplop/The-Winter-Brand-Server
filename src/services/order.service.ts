@@ -19,7 +19,7 @@ const addOrder = catchAsync(async (orderData: any, res: Response, next: NextFunc
             if (orderData.order_type === "subscription") {
                 if (!orderData.subscription_id) return next(new ErrorHandler("subscription id is required", httpStatus.BAD_REQUEST))
             }
-            console.log(orderData.gift)
+
             if (orderData.packages.type === "gift") {
                 if (!orderData.gift.gift_message || !orderData.gift.gift_recipient_email || !orderData.gift.gift_message_date || !orderData.gift.shipping_date) return next(new ErrorHandler("gift data is required", httpStatus.BAD_REQUEST))
             }

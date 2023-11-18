@@ -155,7 +155,7 @@ const getOrdersByEmail = catchAsync(
       const email = req?.query?.email
 
       if (!email) return next(new ErrorHandler("email is required", httpStatus.BAD_REQUEST))
-      const orders = await orderModel.find({ email }).select("name transaction_id order_status email delivery_info.address createdAt user_review").sort({ createdAt: -1 });
+      const orders = await orderModel.find({ email }).select("name transaction_id order_status email delivery_info.address createdAt subscription_id user_review").sort({ createdAt: -1 });
       sendResponse(res, {
         success: true,
         statusCode: httpStatus.CREATED,
@@ -175,7 +175,7 @@ const newPayment = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const amount = req.body?.amount;
-      console.log(amount);
+
       if (!amount)
         return next(
           new ErrorHandler("amount is required", httpStatus.BAD_REQUEST)
@@ -258,7 +258,7 @@ const newSubscribe = catchAsync(async (req, res, next) => {
 });
 const unsubscribe = catchAsync(async (req, res, next) => {
   const { subscriptionId } = req.body;
-  console.log(subscriptionId);
+
 
   try {
     const canceledSubscription = await stripe.subscriptions.cancel(
@@ -322,7 +322,7 @@ const orderController = {
   newSubscribe,
   unsubscribe,
   getInvoiceById,
-  getSingleOrder
+  getSingleOrder,
 };
 
 export default orderController;
