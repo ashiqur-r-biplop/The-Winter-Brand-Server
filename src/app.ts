@@ -21,18 +21,21 @@ import analyticsRouter from "./routes/analytics.routes"
 export const app: Application = express()
 export const nodeCache = new NodeCache()
 
+
+app.use(helmet())
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }))
 app.use(morgan("dev"))
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json())
 app.use(express.json({ limit: "50mb" }))
 app.use(cookieParser())
-// app.use(cors({
-//     origin: config.origin
-// }))
 
 
 app.use(cors({
     origin: "http://localhost:5173",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true, // Enable cookies and authorization headers
+    credentials: true,
 }))
 
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -43,12 +46,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     next();
 });
 
-app.use(helmet())
-app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }))
-app.use(morgan("dev"))
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }));
-app.use(bodyParser.json())
 
 
 app.use("/api/v1", productRouter, userRouter, reviewRouter, orderRouter, marketingRouter, contactRouter, layoutRouter, cartRouter, analyticsRouter)

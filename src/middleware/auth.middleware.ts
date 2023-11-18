@@ -10,7 +10,7 @@ import { nodeCache } from "../app";
 
 export const isAuthenticated = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const access_token: string | undefined = req.headers?.authorization
-
+    console.log("13 number line", req.cookies)
 
     if (!access_token) {
         return next(new ErrorHandler("Please login", httpStatus.BAD_REQUEST))
