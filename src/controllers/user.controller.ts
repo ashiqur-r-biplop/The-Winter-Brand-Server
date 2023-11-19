@@ -84,7 +84,7 @@ const getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFun
         const role = req?.query?.role || "all"
         const query = role === "all" ? {} : { role: role }
         const users = await userModel.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit)
-        const totalUsers = await userModel.estimatedDocumentCount()
+        const totalUsers = await userModel.countDocuments(query)
         sendResponse(res, {
             success: true,
             statusCode: httpStatus.CREATED,

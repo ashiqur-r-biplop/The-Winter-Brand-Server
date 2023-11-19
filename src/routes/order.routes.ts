@@ -18,6 +18,7 @@ orderRouter.get("/search-orders/:query", isAuthenticated, authorizeRoles(USER_RO
 
 orderRouter.get("/get-orders", isAuthenticated, authorizeRoles(USER_ROLE.ADMIN), orderController.getOrders)
 
+
 orderRouter.get("/get-order/:id", isAuthenticated, authorizeRoles(USER_ROLE.ADMIN), orderController.getSingleOrder)
 
 

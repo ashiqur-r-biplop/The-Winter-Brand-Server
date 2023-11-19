@@ -116,12 +116,8 @@ const getOrders = catchAsync(
       const query = orderTap === "all" ? {} : { order_status: orderTap }
       const orders = await orderModel.find({ $and: [{ order_type: { $in: type } }, query] }).sort({ createdAt: -1 }).skip(skip).limit(limit);
 
-
-
-      const cartPaymentQuery = { order_type: { $in: ['payment', 'cart'] } };
-      const subscriptionQuery = { order_type: 'subscription' };
-      const cartPaymentCount = await orderModel.countDocuments(cartPaymentQuery);
-      const subscriptionCount = await orderModel.countDocuments(subscriptionQuery);
+      const cartPaymentCount = await orderModel.countDocuments({ $and: [{ order_type: { $in: ["payment", "cart"] } }, query] });
+      const subscriptionCount = await orderModel.countDocuments({ $and: [{ order_type: { $in: ["subscription"] } }, query] });
 
 
       sendResponse(res, {
@@ -219,7 +215,6 @@ const newSubscribe = catchAsync(async (req, res, next) => {
 
   try {
     const { name, email, paymentMethod, amount } = req.body;
-    console.log(amount, typeof amount)
     // Create a customer
     const customer = await stripe.customers.create({
       email,

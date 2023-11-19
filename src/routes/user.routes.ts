@@ -18,4 +18,5 @@ userRouter.get("/get-all-users", isAuthenticated, authorizeRoles(USER_ROLE.ADMIN
 
 
 
+
 export default userRouter
