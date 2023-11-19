@@ -43,10 +43,14 @@ const getReviews = catchAsync(async (req: Request, res: Response, next: NextFunc
         let limit: number = parseInt((req?.query?.limit || "20") as string)
 
         const reviews = await orderModel.find({ user_review: { $exists: true } }).select("user_review email").sort({ createdAt: -1 }).skip(skip).limit(limit)
+        const totalReviews = await orderModel.countDocuments({ user_review: { $exists: true } })
         sendResponse(res, {
             success: true,
             statusCode: httpStatus.OK,
-            data: reviews
+            data: reviews,
+            meta: {
+                total: totalReviews
+            }
         })
 
     } catch (error: any) {
