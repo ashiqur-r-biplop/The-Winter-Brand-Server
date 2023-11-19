@@ -14,7 +14,8 @@ userRouter.get("/logout", isAuthenticated, userController.logout)
 // only admin 
 userRouter.put("/update-user-role", isAuthenticated, authorizeRoles(USER_ROLE.ADMIN), userController.updateUserRole)
 userRouter.get("/search-users/:query", isAuthenticated, authorizeRoles(USER_ROLE.ADMIN), userController.searchUsers)
-userRouter.get("/get-all-users", isAuthenticated, authorizeRoles(USER_ROLE.ADMIN), userController.getAllUsers)
+// userRouter.get("/get-all-users", isAuthenticated, authorizeRoles(USER_ROLE.ADMIN), userController.getAllUsers)
+userRouter.get("/get-all-users", userController.getAllUsers)
 
 
 export default userRouter
