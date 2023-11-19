@@ -216,9 +216,10 @@ const newPayment = catchAsync(
 
 
 const newSubscribe = catchAsync(async (req, res, next) => {
-  const { name, email, paymentMethod, amount } = req.body;
 
   try {
+    const { name, email, paymentMethod, amount } = req.body;
+    console.log(amount, typeof amount)
     // Create a customer
     const customer = await stripe.customers.create({
       email,
