@@ -267,9 +267,9 @@ const newSubscribe = catchAsync(async (req, res, next) => {
       customer: customer.id,
       subscriptionId,
     });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Server error" });
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, httpStatus.BAD_REQUEST))
+
   }
 });
 const unsubscribe = catchAsync(async (req, res, next) => {
