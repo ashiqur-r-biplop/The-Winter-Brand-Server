@@ -112,14 +112,14 @@ const getOrders = catchAsync(
       let skip: number = parseInt((req?.query?.skip || "0") as string)
       let limit: number = parseInt((req?.query?.limit || "20") as string)
       const orders = await orderModel.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
-      // const totalOrderByCartAndPay = await orderModel.countDocuments({ $or: [{ order_type: "cart" }, { order_type: "payment" }] })
-      // const totalSubscription = await orderModel.countDocuments({ order_type: "subscription" })
+
+
 
       const cartPaymentQuery = { order_type: { $in: ['payment', 'cart'] } };
       const subscriptionQuery = { order_type: 'subscription' };
       const cartPaymentCount = await orderModel.countDocuments(cartPaymentQuery);
       const subscriptionCount = await orderModel.countDocuments(subscriptionQuery);
-      // const totalSubscription = await orderModel.countDocuments({ order_type: "subscription" })
+
 
       sendResponse(res, {
         success: true,
@@ -168,7 +168,7 @@ const getOrdersByEmail = catchAsync(
       const email = req?.query?.email
 
       if (!email) return next(new ErrorHandler("email is required", httpStatus.BAD_REQUEST))
-      const orders = await orderModel.find({ email }).select("name transaction_id order_status email delivery_info.address createdAt subscription_id user_review").sort({ createdAt: -1 });
+      const orders = await orderModel.find({ email }).select("name transaction_id order_status email delivery_info.address createdAt subscription_id user_review order_status").sort({ createdAt: -1 });
       sendResponse(res, {
         success: true,
         statusCode: httpStatus.CREATED,
@@ -281,6 +281,11 @@ const unsubscribe = catchAsync(async (req, res, next) => {
 
     if (canceledSubscription.status === 'canceled') {
       res.json({ message: "Unsubscription successful", canceledSubscription });
+      await orderModel.updateOne({ subscription_id: subscriptionId }, {
+        $set: {
+          order_status: "inactive"
+        }
+      })
     } else {
       res.status(400).json({ error: "Subscription cancellation failed" });
     }

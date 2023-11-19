@@ -13,6 +13,7 @@ export interface IOrder extends Document {
     products?: IProduct[];
     order_status: string;
     transaction_id?: string;
+    subscription_status?: string;
     subscription_id?: string;
     company?: string;
     contact_email: string;
@@ -88,6 +89,10 @@ const OrderSchema = new Schema<IOrder>({
     },
     subscription_id: {
         type: String,
+    },
+    subscription_status: {
+        type: String,
+        enum: ["active", "inactive"]
     },
     company: {
         type: String,
