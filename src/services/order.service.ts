@@ -30,7 +30,7 @@ const addOrder = catchAsync(async (orderData: any, res: Response, next: NextFunc
                 name: orderData.name,
                 transaction_id: orderData.transaction_id,
                 subscription_id: orderData.subscription_id,
-                order_status: orderData.subscription_id && "active",
+                subscription_status: orderData.subscription_id && "active",
                 company: orderData.company,
                 contact_email: orderData.contact_email,
                 email: orderData.email,
@@ -55,7 +55,7 @@ const addOrder = catchAsync(async (orderData: any, res: Response, next: NextFunc
                     postcode: orderData.delivery_info.postcode,
                     city: orderData.delivery_info.city,
                     phone: orderData.delivery_info.phone,
-                    apartment: orderData?.apartment
+                    apartment: orderData?.delivery_info?.apartment
                 },
                 promotions: {
                     phone_number: orderData?.promotions?.phone_number,

@@ -111,7 +111,10 @@ const getOrders = catchAsync(
     try {
       let skip: number = parseInt((req?.query?.skip || "0") as string)
       let limit: number = parseInt((req?.query?.limit || "20") as string)
-      const orders = await orderModel.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
+      const orderTap = req?.query?.tap || "all"
+      const type = !req?.query?.type ? ["payment", "cart"] : req?.query?.type === "subscription" ? ["subscription"] : ["payment", "cart"]
+      const query = orderTap === "all" ? {} : { order_status: orderTap }
+      const orders = await orderModel.find({ $and: [{ order_type: { $in: type } }, query] }).sort({ createdAt: -1 }).skip(skip).limit(limit);
 
 
 
@@ -283,7 +286,7 @@ const unsubscribe = catchAsync(async (req, res, next) => {
       res.json({ message: "Unsubscription successful", canceledSubscription });
       await orderModel.updateOne({ subscription_id: subscriptionId }, {
         $set: {
-          order_status: "inactive"
+          subscription_status: "inactive"
         }
       })
     } else {

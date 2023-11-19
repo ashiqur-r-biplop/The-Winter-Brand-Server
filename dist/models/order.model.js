@@ -61,6 +61,9 @@ const OrderSchema = new mongoose_1.Schema({
     subscription_id: {
         type: String,
     },
+    subscription_status: {
+        type: String,
+    },
     company: {
         type: String,
         default: null

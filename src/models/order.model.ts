@@ -92,7 +92,6 @@ const OrderSchema = new Schema<IOrder>({
     },
     subscription_status: {
         type: String,
-        enum: ["active", "inactive"]
     },
     company: {
         type: String,
